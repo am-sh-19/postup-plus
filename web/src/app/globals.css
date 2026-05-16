@@ -573,8 +573,9 @@ body {
   padding: 1px 5px;
 }
 
-/* Scrollable regions in fixed-height patient / provider layouts */
-.scroll-region {
+/* Scrollable regions in fixed-height patient / provider layouts.
+   Registered via @utility so responsive (lg:, max-lg:, etc.) variants apply. */
+@utility scroll-region {
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;

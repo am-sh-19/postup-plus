@@ -4,8 +4,14 @@ import { useChat, type UIMessage } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatMarkdown } from "@/components/chat/ChatMarkdown";
+import { renderSystemEvent } from "@/lib/action-log";
 import { copy, t } from "@/lib/copy";
-import type { ChatMessage, Locale, Patient } from "@/lib/types";
+import type {
+  ChatMessage,
+  Locale,
+  Patient,
+  PatientTranscript,
+} from "@/lib/types";
 
 interface ChatPaneProps {
   patient: Patient;
@@ -73,7 +79,7 @@ export function ChatPane({
     [patient, locale],
   );
 
-  const { messages, sendMessage, status, stop, error } = useChat({
+  const { messages, sendMessage, setMessages, status, stop, error } = useChat({
     transport,
     messages: initial,
   });
@@ -81,6 +87,40 @@ export function ChatPane({
   const [input, setInput] = useState("");
   const streamRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const hydratedFor = useRef<string | null>(null);
+
+  // Pull persisted transcript on mount (or when the patient changes) so the
+  // conversation resumes where the patient left off — matching what the
+  // provider sees in the Pain Summary tab.
+  useEffect(() => {
+    if (hydratedFor.current === patient.id) return;
+    hydratedFor.current = patient.id;
+
+    const ctrl = new AbortController();
+    void (async () => {
+      try {
+        const res = await fetch(`/api/transcripts/${patient.id}`, {
+          cache: "no-store",
+          signal: ctrl.signal,
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as PatientTranscript;
+        if (!data.turns || data.turns.length === 0) return;
+        setMessages(
+          data.turns.map<UIMessage>((turn) => ({
+            id: turn.id,
+            role: turn.role,
+            parts: [{ type: "text", text: turn.content }],
+          })),
+        );
+      } catch (err) {
+        if ((err as Error).name !== "AbortError")
+          console.error("[chat] failed to hydrate transcript", err);
+      }
+    })();
+
+    return () => ctrl.abort();
+  }, [patient.id, setMessages]);
 
   useEffect(() => {
     const el = streamRef.current;
@@ -165,15 +205,20 @@ export function ChatPane({
             );
           })}
 
-          {externalMessages.map((msg) => (
-            <div
-              key={msg.id}
-              className="w-full rounded-[var(--postup-radius)] border border-[var(--postup-border)] bg-postup-bg px-3 py-2.5"
-              role="status"
-            >
-              <ChatMarkdown content={msg.content} variant="system" />
-            </div>
-          ))}
+          {externalMessages.map((msg) => {
+            const display = msg.event
+              ? renderSystemEvent(msg.event, locale)
+              : msg.content;
+            return (
+              <div
+                key={msg.id}
+                className="w-full rounded-[var(--postup-radius)] border border-[var(--postup-border)] bg-postup-bg px-3 py-2.5"
+                role="status"
+              >
+                <ChatMarkdown content={display} variant="system" />
+              </div>
+            );
+          })}
 
           {showTyping && (
             <div className="self-start max-w-[90%] bg-postup-soft border border-[var(--postup-border)]/40 px-4 py-2.5 rounded-[var(--postup-radius)] rounded-bl-sm">

@@ -8,6 +8,8 @@ import {
 } from "@/lib/ai-contract";
 import { copy, t } from "@/lib/copy";
 import { addPlanItem } from "@/lib/plan-store";
+import { CitedMarkdown } from "./CitedMarkdown";
+import { SourceList } from "./SourceList";
 import type {
   Locale,
   PatientChart,
@@ -166,7 +168,6 @@ export function PrescribingHero({
   const c = HERO_COPY[locale];
   const [state, setState] = useState<EvidenceState>(EMPTY);
   const abortRef = useRef<AbortController | null>(null);
-  const triggeredRef = useRef(false);
 
   const sparkPoints = useMemo(() => {
     const cutoff = chart.meta.todayPod - 7;
@@ -248,14 +249,14 @@ export function PrescribingHero({
     }
   }, [recommendation, chart, signals, c.error]);
 
-  // Auto-fire on first render for this recommendation.
+  // Auto-fire whenever the recommendation changes. React 19 StrictMode
+  // double-invokes this effect in dev; runEvidence already aborts the
+  // previous in-flight request before starting a new one, so the second
+  // invocation cleanly replaces the first.
   useEffect(() => {
-    if (triggeredRef.current) return;
-    triggeredRef.current = true;
     void runEvidence();
     return () => abortRef.current?.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recommendation.id]);
+  }, [runEvidence]);
 
   const added = planItems.some((p) => p.id === recommendation.id);
 
@@ -440,27 +441,7 @@ export function PrescribingHero({
             {state.text && (
               <CitedMarkdown text={state.text} citations={state.citations} />
             )}
-            {state.citations.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-sp-line">
-                <p className="text-[10px] uppercase tracking-[0.1em] text-sp-subtle font-semibold m-0 mb-1.5">
-                  {c.sources}
-                </p>
-                <ol className="m-0 pl-4 space-y-0.5 text-[12px]">
-                  {state.citations.map((cite, i) => (
-                    <li key={cite.url} className="text-sp-muted">
-                      <a
-                        href={cite.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sp-teal-700 hover:underline"
-                      >
-                        [{i + 1}] {cite.title}
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
+            <SourceList citations={state.citations} label={c.sources} />
           </div>
         </div>
       </div>
@@ -594,37 +575,3 @@ function Spinner() {
   );
 }
 
-function CitedMarkdown({
-  text,
-  citations,
-}: {
-  text: string;
-  citations: ContractCitation[];
-}) {
-  const parts = text.split(/(\[\d+\])/g);
-  return (
-    <div className="whitespace-pre-wrap">
-      {parts.map((part, i) => {
-        const m = part.match(/^\[(\d+)\]$/);
-        if (m) {
-          const num = parseInt(m[1]!, 10);
-          const cite = citations[num - 1];
-          if (cite) {
-            return (
-              <a
-                key={i}
-                href={cite.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sp-teal-700 hover:underline mx-0.5 text-[11px] font-semibold align-super"
-              >
-                [{num}]
-              </a>
-            );
-          }
-        }
-        return <span key={i}>{part}</span>;
-      })}
-    </div>
-  );
-}

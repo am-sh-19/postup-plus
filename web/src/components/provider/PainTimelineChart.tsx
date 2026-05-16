@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { copy, t } from "@/lib/copy";
-import type { Locale, PatientChart, Signal } from "@/lib/types";
+import type { Locale, PainEntry, PatientChart, Signal } from "@/lib/types";
 
 interface PainTimelineChartProps {
   chart: PatientChart;
@@ -52,14 +52,36 @@ export function PainTimelineChart({
   locale,
 }: PainTimelineChartProps) {
   const [range, setRange] = useState<Range>("7d");
+  const [liveEntries, setLiveEntries] = useState<PainEntry[]>([]);
   const plateau = useMemo(
     () => signals.find((s) => s.id === "plateau"),
     [signals],
   );
 
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch(`/api/pain/${chart.meta.patientId}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as { entries?: PainEntry[] };
+        if (!cancelled && Array.isArray(data.entries)) {
+          setLiveEntries(data.entries);
+        }
+      } catch {
+        // network failure → fall back to hardcoded chart history only
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [chart.meta.patientId]);
+
   const points: ChartPoint[] = useMemo(
     () =>
-      chart.pain
+      [...chart.pain, ...liveEntries]
         .map((p) => ({
           x: p.pod + podHour(p.timestamp) / 24,
           pod: p.pod,
@@ -69,7 +91,7 @@ export function PainTimelineChart({
           note: p.note,
         }))
         .sort((a, b) => a.x - b.x),
-    [chart.pain],
+    [chart.pain, liveEntries],
   );
 
   const today = chart.meta.todayPod;

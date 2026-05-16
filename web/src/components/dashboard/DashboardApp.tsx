@@ -2,13 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import {
-  painCheckInMessage,
-  walkLoggedMessage,
-} from "@/lib/action-log";
+import { renderSystemEvent } from "@/lib/action-log";
 import { getPatient, getPatientsRecord } from "@/lib/data";
 import { getPatientSession, setPatientSession } from "@/lib/session";
-import type { ChatMessage, Locale } from "@/lib/types";
+import type { ChatMessage, ChatSystemEvent, Locale } from "@/lib/types";
 import { ChatPane } from "./ChatPane";
 import { DownloadPlanButton } from "./DownloadPlanButton";
 import { FaqSection } from "./FaqSection";
@@ -63,6 +60,24 @@ export function DashboardApp() {
     ]);
   }, []);
 
+  const addSystemEvent = useCallback(
+    (event: ChatSystemEvent) => {
+      // Render in the current locale for the initial display; the event
+      // payload is retained so re-renders pick up the new locale.
+      setSystemMessages((msgs) => [
+        ...msgs,
+        {
+          id: crypto.randomUUID(),
+          role: "system",
+          content: renderSystemEvent(event, locale),
+          timestamp: event.iso,
+          event,
+        },
+      ]);
+    },
+    [locale],
+  );
+
   function handleLocaleChange(next: Locale) {
     setLocale(next);
     const session = getPatientSession();
@@ -74,7 +89,11 @@ export function DashboardApp() {
     const nextCount = Math.min(walkCount + 1, 24);
     setWalkCount(nextCount);
     setMinutesUntilWalk(60);
-    addSystemMessage(walkLoggedMessage(nextCount, locale));
+    addSystemEvent({
+      kind: "walk-logged",
+      walksToday: nextCount,
+      iso: new Date().toISOString(),
+    });
   }
 
   if (!ready || !patient) {
@@ -101,16 +120,16 @@ export function DashboardApp() {
         <p className="text-xs text-postup-muted m-0 mt-0.5">{patient.procedure}</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 lg:grid-rows-1 gap-4 flex-1 min-h-0 lg:h-full lg:min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <ChatPane
           key={`${patient.id}-${locale}`}
           patient={patient}
           locale={locale}
           externalMessages={systemMessages}
-          className="lg:col-span-3 min-h-[min(420px,55vh)] lg:min-h-0 lg:h-full lg:max-h-full"
+          className="lg:col-span-3 min-h-[min(420px,55vh)] lg:sticky lg:top-20 lg:h-[calc(100dvh-7rem)]"
         />
 
-        <aside className="lg:col-span-2 flex flex-col gap-3 min-h-0 lg:h-full lg:max-h-full lg:scroll-region pb-1">
+        <aside className="lg:col-span-2 flex flex-col gap-3">
           <MovementBanner
             locale={locale}
             minutesUntilWalk={minutesUntilWalk}
@@ -119,7 +138,30 @@ export function DashboardApp() {
           <PainPanel
             locale={locale}
             onSave={(level, label) => {
-              addSystemMessage(painCheckInMessage(level, label, locale));
+              const iso = new Date().toISOString();
+              addSystemEvent({
+                kind: "pain-checkin",
+                level,
+                iso,
+              });
+              void fetch(`/api/pain/${patient.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ level, timestamp: iso, note: label }),
+              }).catch((err) =>
+                console.error("[pain] failed to persist check-in", err),
+              );
+              void fetch(`/api/transcripts/${patient.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  role: "user",
+                  content: `Pain check-in: ${level}/10 (${label})`,
+                  timestamp: iso,
+                }),
+              }).catch((err) =>
+                console.error("[pain] failed to persist transcript turn", err),
+              );
             }}
           />
           <MovementLog
@@ -131,7 +173,7 @@ export function DashboardApp() {
           <MedsPanel
             patient={patient}
             locale={locale}
-            onLog={addSystemMessage}
+            onLogEvent={addSystemEvent}
           />
           <DownloadPlanButton patient={patient} locale={locale} />
           <FaqSection locale={locale} />

@@ -10,6 +10,26 @@ export const ENDPOINTS = {
   rxRationale: "/api/rx-rationale",
 } as const;
 
+/** Authoritative medical domains for the Anthropic web_search tool. */
+export const MEDICAL_DOMAINS = [
+  "pubmed.ncbi.nlm.nih.gov",
+  "ncbi.nlm.nih.gov",
+  "nih.gov",
+  "cdc.gov",
+  "mayoclinic.org",
+  "uptodate.com",
+  "medscape.com",
+  "aafp.org",
+  "who.int",
+  "cochranelibrary.com",
+  "nejm.org",
+  "jamanetwork.com",
+  "bmj.com",
+  "thelancet.com",
+  "acpjournals.org",
+  "aaos.org",
+] as const;
+
 export interface ClinicalLookupRequest {
   query: string;
   context: {

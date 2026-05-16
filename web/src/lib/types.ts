@@ -61,11 +61,19 @@ export interface FaqItem {
   answer: Record<Locale, string>;
 }
 
+export type ChatSystemEvent =
+  | { kind: "pain-checkin"; level: number; iso: string }
+  | { kind: "walk-logged"; walksToday: number; iso: string }
+  | { kind: "med-with-food"; iso: string }
+  | { kind: "med-dose"; iso: string };
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant" | "system";
   content: string;
   timestamp?: string;
+  /** Structured event for system messages — render with current locale. */
+  event?: ChatSystemEvent;
 }
 
 export interface PatientSession {

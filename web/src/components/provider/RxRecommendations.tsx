@@ -8,6 +8,8 @@ import {
 } from "@/lib/ai-contract";
 import { copy, t } from "@/lib/copy";
 import { addPlanItem } from "@/lib/plan-store";
+import { CitedMarkdown } from "./CitedMarkdown";
+import { SourceList } from "./SourceList";
 import type {
   Locale,
   PatientChart,
@@ -279,9 +281,10 @@ export function RxRecommendations({
                   {state.text && (
                     <CitedMarkdown text={state.text} citations={state.citations} />
                   )}
-                  {state.citations.length > 0 && (
-                    <CitationList citations={state.citations} locale={locale} />
-                  )}
+                  <SourceList
+                    citations={state.citations}
+                    label={t(copy.provider.evidenceSources, locale)}
+                  />
                 </div>
               )}
             </li>
@@ -292,67 +295,3 @@ export function RxRecommendations({
   );
 }
 
-function CitedMarkdown({
-  text,
-  citations,
-}: {
-  text: string;
-  citations: ContractCitation[];
-}) {
-  const parts = text.split(/(\[\d+\])/g);
-  return (
-    <div className="whitespace-pre-wrap">
-      {parts.map((part, i) => {
-        const m = part.match(/^\[(\d+)\]$/);
-        if (m) {
-          const num = parseInt(m[1]!, 10);
-          const cite = citations[num - 1];
-          if (cite) {
-            return (
-              <a
-                key={i}
-                href={cite.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sp-teal-700 hover:underline mx-0.5 text-[11px] font-semibold align-super"
-              >
-                [{num}]
-              </a>
-            );
-          }
-        }
-        return <span key={i}>{part}</span>;
-      })}
-    </div>
-  );
-}
-
-function CitationList({
-  citations,
-  locale,
-}: {
-  citations: ContractCitation[];
-  locale: Locale;
-}) {
-  return (
-    <div className="mt-3 pt-3 border-t border-sp-line">
-      <p className="text-[10px] uppercase tracking-[0.08em] font-semibold text-sp-subtle m-0 mb-1.5">
-        {t(copy.provider.evidenceSources, locale)}
-      </p>
-      <ol className="m-0 pl-4 space-y-0.5 text-[11.5px]">
-        {citations.map((c, i) => (
-          <li key={c.url} className="text-sp-muted">
-            <a
-              href={c.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sp-teal-700 hover:underline"
-            >
-              [{i + 1}] {c.title}
-            </a>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}

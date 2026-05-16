@@ -11,6 +11,7 @@ import type {
   Sentiment,
   SentimentPoint,
 } from "@/lib/types";
+import { ChatTranscriptPane } from "./ChatTranscriptPane";
 
 interface PainSummaryProps {
   patientId: PatientId;
@@ -132,18 +133,25 @@ export function PainSummary({ patientId, locale }: PainSummaryProps) {
       )}
 
       {status === "ready" && insights && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+          <div className="lg:col-span-7 space-y-4 min-w-0">
             <NarrativeCard insights={insights} locale={locale} />
             <PainNarrativeCard insights={insights} locale={locale} />
             <QuotesCard insights={insights} locale={locale} />
             <ConcernsCard insights={insights} locale={locale} />
           </div>
-          <div className="space-y-4">
-            <SentimentCard insights={insights} locale={locale} />
-            <MoodCard insights={insights} locale={locale} />
-            <AdherenceCard insights={insights} locale={locale} />
-            <NextVisitCard insights={insights} locale={locale} />
+          <div className="lg:col-span-5 lg:sticky lg:top-4 flex flex-col gap-4 min-w-0 lg:max-h-[calc(100vh-3rem)]">
+            <ChatTranscriptPane
+              patientId={patientId}
+              locale={locale}
+              className="lg:flex-1 lg:min-h-[420px] max-lg:h-[420px]"
+            />
+            <div className="space-y-3 lg:shrink-0">
+              <SentimentCard insights={insights} locale={locale} />
+              <MoodCard insights={insights} locale={locale} />
+              <AdherenceCard insights={insights} locale={locale} />
+              <NextVisitCard insights={insights} locale={locale} />
+            </div>
           </div>
         </div>
       )}

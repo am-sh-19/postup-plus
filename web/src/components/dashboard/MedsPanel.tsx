@@ -1,17 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { medDoseMessage, medWithFoodMessage } from "@/lib/action-log";
 import { copy, t } from "@/lib/copy";
-import type { Locale, Patient } from "@/lib/types";
+import type { ChatSystemEvent, Locale, Patient } from "@/lib/types";
 
 interface MedsPanelProps {
   patient: Patient;
   locale: Locale;
-  onLog: (message: string) => void;
+  onLogEvent: (event: ChatSystemEvent) => void;
 }
 
-export function MedsPanel({ patient, locale, onLog }: MedsPanelProps) {
+export function MedsPanel({ patient, locale, onLogEvent }: MedsPanelProps) {
   const [foodDone, setFoodDone] = useState(false);
   const [doseDone, setDoseDone] = useState(false);
 
@@ -19,12 +18,12 @@ export function MedsPanel({ patient, locale, onLog }: MedsPanelProps) {
 
   function handleWithFood() {
     setFoodDone(true);
-    onLog(medWithFoodMessage(locale));
+    onLogEvent({ kind: "med-with-food", iso: new Date().toISOString() });
   }
 
   function handleDose() {
     setDoseDone(true);
-    onLog(medDoseMessage(locale));
+    onLogEvent({ kind: "med-dose", iso: new Date().toISOString() });
     setTimeout(() => {
       setFoodDone(false);
       setDoseDone(false);

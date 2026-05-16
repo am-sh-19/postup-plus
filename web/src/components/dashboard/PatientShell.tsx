@@ -24,8 +24,8 @@ export function PatientShell({
   }
 
   return (
-    <div className="h-dvh flex flex-col overflow-hidden bg-[var(--postup-bg)]">
-      <header className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-[var(--postup-border)] bg-white">
+    <div className="min-h-dvh flex flex-col bg-[var(--postup-bg)]">
+      <header className="shrink-0 sticky top-0 z-10 flex items-center justify-between px-5 py-3 border-b border-[var(--postup-border)] bg-white">
         <div className="flex items-center gap-3 min-w-0">
           <LogoHomeLink height={34} />
           <span className="portal-badge shrink-0">
@@ -69,10 +69,8 @@ export function PatientShell({
         </div>
       </header>
 
-      <main className="flex-1 min-h-0 max-lg:scroll-region lg:overflow-hidden p-4 md:p-6 pb-6">
-        <div className="max-w-6xl mx-auto h-full min-h-0 flex flex-col lg:min-h-full">
-          {children}
-        </div>
+      <main className="flex-1 p-4 md:p-6 pb-6">
+        <div className="max-w-6xl mx-auto flex flex-col">{children}</div>
       </main>
     </div>
   );
