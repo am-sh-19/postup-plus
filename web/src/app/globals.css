@@ -1,36 +1,54 @@
 @import "tailwindcss";
 
 :root {
-  /* PostUp+ logo palette */
   --postup-navy: #021f53;
   --postup-blue: #2a8ce0;
   --postup-blue-dark: #0f74d6;
   --postup-green: #65ca79;
   --postup-green-dark: #2aae72;
   --postup-teal: #5aa6e6;
-  --background: #f5f7fa;
-  --foreground: var(--postup-navy);
+  --postup-bg: #f5f7fa;
+  --postup-bg-2: #eef2f7;
+  --postup-panel: #ffffff;
+  --postup-muted: #5a6d8a;
+  --postup-soft: #e8f4fd;
+  --postup-move-soft: #e8f7ec;
+  --postup-border: rgba(2, 31, 83, 0.1);
+  --postup-rounded: 22px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--postup-bg);
+  --color-foreground: var(--postup-navy);
   --color-postup-navy: var(--postup-navy);
   --color-postup-blue: var(--postup-blue);
+  --color-postup-blue-dark: var(--postup-blue-dark);
   --color-postup-green: var(--postup-green);
+  --color-postup-green-dark: var(--postup-green-dark);
+  --color-postup-muted: var(--postup-muted);
+  --color-postup-panel: var(--postup-panel);
+  --color-postup-soft: var(--postup-soft);
+  --color-postup-bg-2: var(--postup-bg-2);
+  --color-postup-move-soft: var(--postup-move-soft);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--postup-bg);
+  color: var(--postup-navy);
+  font-family: var(--font-sans), ui-rounded, system-ui, sans-serif;
+}
+
+@keyframes walk-pulse {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.12) rotate(-6deg);
+  }
+}
+
+.animate-walk-pulse {
+  animation: walk-pulse 1.8s ease-in-out infinite;
 }
