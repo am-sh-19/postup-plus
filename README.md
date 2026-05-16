@@ -20,3 +20,9 @@ bun run dev
 ```
 
 Open http://localhost:3000
+
+## Vercel deploy
+
+In the Vercel project: **Settings → General → Root Directory → `web`** (then redeploy).
+
+If Root Directory is the repo root, framework detection fails because `next` is declared in `web/package.json`, not the root wrapper.
