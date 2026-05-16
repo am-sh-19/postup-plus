@@ -24,7 +24,7 @@ interface PainTimelineChartProps {
 type Range = "3d" | "7d" | "all";
 
 interface ChartPoint {
-  x: number; // fractional POD (pod + hour/24)
+  x: number;
   pod: number;
   hour: number;
   level: number;
@@ -90,29 +90,28 @@ export function PainTimelineChart({
 
   return (
     <section
-      className="bg-white rounded-[var(--postup-rounded)] p-5 shadow-sm border border-[var(--postup-border)]/60"
-      style={{ boxShadow: "0 1px 3px rgba(2, 31, 83, 0.05), 0 8px 24px rgba(2, 31, 83, 0.03)" }}
+      className="bg-white rounded-lg border border-sp-line"
       aria-label="Pain over time"
     >
-      <header className="flex items-baseline justify-between mb-2">
+      <header className="flex items-baseline justify-between px-5 py-3 border-b border-sp-line-soft">
         <div>
-          <h3 className="text-base font-semibold text-postup-navy m-0">
+          <h3 className="text-[15px] font-semibold text-sp-ink m-0 tracking-tight">
             {t(copy.provider.painTitle, locale)}
           </h3>
-          <p className="text-xs text-postup-muted m-0 mt-0.5">
+          <p className="text-[11px] text-sp-muted m-0 mt-0.5 uppercase tracking-[0.06em]">
             {t(copy.provider.painAxisX, locale)} · {t(copy.provider.painAxisY, locale)}
           </p>
         </div>
-        <div className="inline-flex rounded-full bg-postup-bg p-1 text-[11px]">
+        <div className="inline-flex rounded-md border border-sp-line p-0.5 text-[11px] bg-white">
           {(["3d", "7d", "all"] as Range[]).map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => setRange(r)}
-              className={`px-2.5 py-1 rounded-full transition ${
+              className={`px-2.5 py-1 rounded transition ${
                 range === r
-                  ? "bg-postup-blue text-white font-semibold"
-                  : "text-postup-muted"
+                  ? "bg-sp-teal-50 text-sp-teal-800 font-semibold"
+                  : "text-sp-muted hover:text-sp-text"
               }`}
             >
               {r === "3d"
@@ -125,10 +124,14 @@ export function PainTimelineChart({
         </div>
       </header>
 
-      <div className="h-[260px] -ml-2">
+      <div className="h-[260px] px-3 py-3">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={visible} margin={{ top: 12, right: 12, bottom: 8, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(2,31,83,0.07)" />
+          <LineChart data={visible} margin={{ top: 8, right: 12, bottom: 4, left: 0 }}>
+            <CartesianGrid
+              vertical={false}
+              stroke="var(--sp-line-soft)"
+              strokeDasharray="0"
+            />
             <XAxis
               dataKey="x"
               type="number"
@@ -138,15 +141,19 @@ export function PainTimelineChart({
                 (_, i) => Math.ceil(minPod) + i,
               )}
               tickFormatter={(v) => `POD ${Math.round(v)}`}
-              stroke="rgba(2,31,83,0.5)"
-              fontSize={11}
+              stroke="var(--sp-subtle)"
+              tick={{ fill: "var(--sp-muted)", fontSize: 11 }}
+              tickLine={false}
+              axisLine={{ stroke: "var(--sp-line)" }}
             />
             <YAxis
               domain={[0, 10]}
               ticks={[0, 2, 4, 6, 8, 10]}
-              stroke="rgba(2,31,83,0.5)"
-              fontSize={11}
-              width={30}
+              stroke="var(--sp-subtle)"
+              tick={{ fill: "var(--sp-muted)", fontSize: 11 }}
+              tickLine={false}
+              axisLine={false}
+              width={28}
             />
             {plateau?.focusPod && (
               <ReferenceArea
@@ -154,19 +161,20 @@ export function PainTimelineChart({
                 x2={plateau.focusPod.end + 1}
                 y1={5}
                 y2={10}
-                fill="rgba(239, 68, 68, 0.06)"
-                stroke="rgba(239, 68, 68, 0.25)"
-                strokeDasharray="4 4"
+                fill="var(--sp-teal-50)"
+                stroke="var(--sp-teal-200)"
+                strokeDasharray="3 3"
               />
             )}
             <Tooltip
-              cursor={{ stroke: "rgba(42,140,224,0.35)" }}
+              cursor={{ stroke: "var(--sp-teal-300)" }}
               contentStyle={{
                 background: "white",
-                border: "1px solid rgba(2,31,83,0.1)",
-                borderRadius: 12,
+                border: "1px solid var(--sp-line)",
+                borderRadius: 8,
                 fontSize: 12,
                 padding: "8px 10px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
               }}
               labelFormatter={(v) => {
                 const num = typeof v === "number" ? v : Number(v);
@@ -184,10 +192,10 @@ export function PainTimelineChart({
             <Line
               type="monotone"
               dataKey="level"
-              stroke="var(--postup-blue)"
-              strokeWidth={2.5}
-              dot={{ r: 3, fill: "var(--postup-blue)", strokeWidth: 0 }}
-              activeDot={{ r: 5 }}
+              stroke="var(--sp-teal-600)"
+              strokeWidth={2}
+              dot={{ r: 3, fill: "var(--sp-teal-600)", strokeWidth: 0 }}
+              activeDot={{ r: 5, fill: "var(--sp-teal-700)" }}
               isAnimationActive={false}
             />
             {doseMarkers.map((m, i) => (
@@ -195,10 +203,10 @@ export function PainTimelineChart({
                 key={`d${i}`}
                 x={m.x}
                 y={0.4}
-                r={4}
-                fill={m.taken ? "var(--postup-green)" : "rgba(239,68,68,0.85)"}
+                r={3}
+                fill={m.taken ? "var(--sp-success)" : "var(--sp-danger)"}
                 stroke="white"
-                strokeWidth={1.5}
+                strokeWidth={1}
                 ifOverflow="extendDomain"
               />
             ))}
@@ -206,22 +214,25 @@ export function PainTimelineChart({
         </ResponsiveContainer>
       </div>
 
-      <footer className="mt-3 flex flex-wrap gap-3 text-[11px] text-postup-muted">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block w-2.5 h-2.5 rounded-full bg-postup-green" />
-          {t(copy.provider.painLegendDose, locale)}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-500/85" />
-          {t(copy.provider.painLegendSkipped, locale)}
-        </span>
+      <footer className="flex flex-wrap gap-4 text-[11px] text-sp-muted px-5 py-3 border-t border-sp-line-soft">
+        <Legend dot="bg-sp-success" label={t(copy.provider.painLegendDose, locale)} />
+        <Legend dot="bg-sp-danger" label={t(copy.provider.painLegendSkipped, locale)} />
         {plateau && (
           <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block w-2.5 h-2.5 rounded-sm bg-red-500/10 border border-red-500/30" />
+            <span className="inline-block w-2.5 h-2.5 rounded-sm bg-sp-teal-50 border border-sp-teal-200" />
             {t(copy.provider.painLegendPlateau, locale)}
           </span>
         )}
       </footer>
     </section>
+  );
+}
+
+function Legend({ dot, label }: { dot: string; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span className={`inline-block w-1.5 h-1.5 rounded-full ${dot}`} />
+      {label}
+    </span>
   );
 }

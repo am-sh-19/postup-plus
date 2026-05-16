@@ -17,6 +17,42 @@
   --postup-radius: 10px;
   --postup-radius-lg: 14px;
   --postup-rounded: 14px;
+
+  /* SimplePractice-inspired tokens for the provider portal. Brand
+     accent swapped from SP yellow → teal at the user's direction. */
+  --sp-canvas: #fafaf9;
+  --sp-surface: #ffffff;
+  --sp-tint-mint: #f0fdf4;
+  --sp-tint-sage: #f4f8f6;
+  --sp-tint-blush: #fdf2f8;
+  --sp-tint-cream: #fbf8ee;
+
+  --sp-ink: #111827;
+  --sp-text: #374151;
+  --sp-muted: #6b7280;
+  --sp-subtle: #9ca3af;
+
+  --sp-line: #e5e7eb;
+  --sp-line-soft: #f3f4f6;
+
+  --sp-teal-50: #f0fdfa;
+  --sp-teal-100: #ccfbf1;
+  --sp-teal-200: #99f6e4;
+  --sp-teal-300: #5eead4;
+  --sp-teal-500: #14b8a6;
+  --sp-teal-600: #0d9488;
+  --sp-teal-700: #0f766e;
+  --sp-teal-800: #115e59;
+  --sp-teal-900: #134e4a;
+
+  --sp-danger: #b91c1c;
+  --sp-danger-bg: #fef2f2;
+  --sp-warn: #b45309;
+  --sp-warn-bg: #fffbeb;
+  --sp-info: #4b5563;
+  --sp-info-bg: #f3f4f6;
+  --sp-success: #15803d;
+  --sp-success-bg: #f0fdf4;
 }
 
 @theme inline {
@@ -32,6 +68,29 @@
   --color-postup-soft: var(--postup-soft);
   --color-postup-bg-2: var(--postup-bg-2);
   --color-postup-move-soft: var(--postup-move-soft);
+  --color-sp-canvas: var(--sp-canvas);
+  --color-sp-surface: var(--sp-surface);
+  --color-sp-ink: var(--sp-ink);
+  --color-sp-text: var(--sp-text);
+  --color-sp-muted: var(--sp-muted);
+  --color-sp-subtle: var(--sp-subtle);
+  --color-sp-line: var(--sp-line);
+  --color-sp-line-soft: var(--sp-line-soft);
+  --color-sp-teal-50: var(--sp-teal-50);
+  --color-sp-teal-100: var(--sp-teal-100);
+  --color-sp-teal-300: var(--sp-teal-300);
+  --color-sp-teal-500: var(--sp-teal-500);
+  --color-sp-teal-600: var(--sp-teal-600);
+  --color-sp-teal-700: var(--sp-teal-700);
+  --color-sp-teal-800: var(--sp-teal-800);
+  --color-sp-teal-900: var(--sp-teal-900);
+  --color-sp-tint-mint: var(--sp-tint-mint);
+  --color-sp-tint-sage: var(--sp-tint-sage);
+  --color-sp-tint-cream: var(--sp-tint-cream);
+  --color-sp-danger: var(--sp-danger);
+  --color-sp-warn: var(--sp-warn);
+  --color-sp-info: var(--sp-info);
+  --color-sp-success: var(--sp-success);
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-display);
 }

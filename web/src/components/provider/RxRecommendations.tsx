@@ -28,13 +28,25 @@ interface RxRecommendationsProps {
   planItems: PlanItem[];
 }
 
-const KIND_STYLE: Record<RecommendationKind, { label: keyof typeof copy.provider; pill: string }> = {
-  primary: { label: "rxKindPrimary", pill: "bg-postup-blue text-white" },
-  adjunct: { label: "rxKindAdjunct", pill: "bg-postup-soft text-postup-blue-dark" },
-  taper: { label: "rxKindTaper", pill: "bg-postup-move-soft text-postup-green-dark" },
+const KIND_STYLE: Record<
+  RecommendationKind,
+  { labelKey: keyof typeof copy.provider; chip: string }
+> = {
+  primary: {
+    labelKey: "rxKindPrimary",
+    chip: "bg-sp-teal-50 text-sp-teal-800 border-sp-teal-100",
+  },
+  adjunct: {
+    labelKey: "rxKindAdjunct",
+    chip: "bg-sp-info-bg text-sp-info border-gray-200",
+  },
+  taper: {
+    labelKey: "rxKindTaper",
+    chip: "bg-sp-success-bg text-sp-success border-green-200",
+  },
   "non-pharm": {
-    label: "rxKindNonPharm",
-    pill: "bg-amber-100 text-amber-700",
+    labelKey: "rxKindNonPharm",
+    chip: "bg-sp-warn-bg text-sp-warn border-amber-200",
   },
 };
 
@@ -46,7 +58,7 @@ interface RationaleState {
   searching: string;
 }
 
-const EMPTY_RATIONALE: RationaleState = {
+const EMPTY: RationaleState = {
   loading: false,
   text: "",
   citations: [],
@@ -67,11 +79,7 @@ export function RxRecommendations({
 
   const fetchRationale = useCallback(
     async (rec: RxRecommendation) => {
-      setOpen((s) => ({
-        ...s,
-        [rec.id]: { ...EMPTY_RATIONALE, loading: true },
-      }));
-
+      setOpen((s) => ({ ...s, [rec.id]: { ...EMPTY, loading: true } }));
       try {
         const res = await fetch(ENDPOINTS.rxRationale, {
           method: "POST",
@@ -81,18 +89,16 @@ export function RxRecommendations({
             context: { patientChart: chart, signals },
           }),
         });
-
         if (!res.ok || !res.body) {
           setOpen((s) => ({
             ...s,
             [rec.id]: {
-              ...EMPTY_RATIONALE,
+              ...EMPTY,
               error: t(copy.provider.rxServiceWarming, locale),
             },
           }));
           return;
         }
-
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
@@ -106,14 +112,12 @@ export function RxRecommendations({
             const ev = parseContractEvent(line);
             if (!ev) continue;
             setOpen((s) => {
-              const cur = s[rec.id] ?? EMPTY_RATIONALE;
-              if (ev.type === "text_delta") {
+              const cur = s[rec.id] ?? EMPTY;
+              if (ev.type === "text_delta")
                 return { ...s, [rec.id]: { ...cur, text: cur.text + ev.text } };
-              }
-              if (ev.type === "searching") {
+              if (ev.type === "searching")
                 return { ...s, [rec.id]: { ...cur, searching: ev.query } };
-              }
-              if (ev.type === "done") {
+              if (ev.type === "done")
                 return {
                   ...s,
                   [rec.id]: {
@@ -123,13 +127,11 @@ export function RxRecommendations({
                     searching: "",
                   },
                 };
-              }
-              if (ev.type === "error") {
+              if (ev.type === "error")
                 return {
                   ...s,
                   [rec.id]: { ...cur, loading: false, error: ev.error },
                 };
-              }
               return s;
             });
           }
@@ -138,8 +140,11 @@ export function RxRecommendations({
         setOpen((s) => ({
           ...s,
           [rec.id]: {
-            ...EMPTY_RATIONALE,
-            error: err instanceof Error ? err.message : t(copy.provider.rxServiceWarming, locale),
+            ...EMPTY,
+            error:
+              err instanceof Error
+                ? err.message
+                : t(copy.provider.rxServiceWarming, locale),
           },
         }));
       }
@@ -165,101 +170,111 @@ export function RxRecommendations({
       drug: rec.drug,
       dose: rec.dose,
       duration: rec.duration,
-      reason:
-        rec.relatedSignalIds[0] ??
-        (rec.kind === "non-pharm" ? "non-pharm" : "ai"),
+      reason: rec.relatedSignalIds[0] ?? (rec.kind === "non-pharm" ? "non-pharm" : "ai"),
       addedAtIso: new Date().toISOString(),
     };
-    const next = addPlanItem(patientId, item);
-    onPlanChange(next);
+    onPlanChange(addPlanItem(patientId, item));
   }
 
   const inPlan = new Set(planItems.map((p) => p.id));
 
   return (
     <section
-      className="bg-white rounded-[var(--postup-rounded)] p-5 shadow-sm border border-[var(--postup-border)]/60"
-      style={{ boxShadow: "0 1px 3px rgba(2, 31, 83, 0.05), 0 8px 24px rgba(2, 31, 83, 0.03)" }}
+      className="bg-white rounded-lg border border-sp-line"
       aria-label="AI recommendations"
     >
-      <header className="mb-3">
-        <h3 className="text-base font-semibold text-postup-navy m-0">
-          ✨ {t(copy.provider.rxTitle, locale)}
-        </h3>
-        <p className="text-xs text-postup-muted m-0 mt-0.5">
-          {t(copy.provider.rxSubtitle, locale)}
-        </p>
+      <header className="flex items-baseline justify-between px-5 py-3 border-b border-sp-line-soft">
+        <div>
+          <h3 className="text-[15px] font-semibold text-sp-ink m-0 tracking-tight">
+            {t(copy.provider.rxTitle, locale)}
+          </h3>
+          <p className="text-[12px] text-sp-muted m-0 mt-0.5">
+            {t(copy.provider.rxSubtitle, locale)}
+          </p>
+        </div>
+        <span className="text-[10px] uppercase tracking-[0.08em] text-sp-teal-700 bg-sp-teal-50 border border-sp-teal-100 rounded px-2 py-0.5">
+          AI
+        </span>
       </header>
 
       {recommendations.length === 0 && (
-        <p className="text-sm text-postup-muted">
+        <p className="text-sm text-sp-muted px-5 py-6 m-0">
           {t(copy.provider.rxEmpty, locale)}
         </p>
       )}
 
-      <div className="grid gap-3 md:grid-cols-2">
+      <ul className="m-0 p-0 list-none divide-y divide-sp-line-soft">
         {recommendations.map((rec) => {
+          const state = open[rec.id] ?? EMPTY;
           const isOpen = !!open[rec.id];
-          const state = open[rec.id] ?? EMPTY_RATIONALE;
           const added = inPlan.has(rec.id);
           const kindMeta = KIND_STYLE[rec.kind];
+
           return (
-            <article
-              key={rec.id}
-              className="rounded-2xl bg-postup-bg border border-[var(--postup-border)] p-4 flex flex-col"
-            >
-              <div className="flex items-start justify-between gap-2 mb-1">
-                <h4 className="text-[15px] font-semibold text-postup-navy m-0">
-                  {rec.drug}
-                </h4>
-                <span
-                  className={`text-[10px] font-semibold uppercase tracking-wider rounded-full px-2 py-0.5 ${kindMeta.pill}`}
-                >
-                  {t(copy.provider[kindMeta.label], locale)}
-                </span>
-              </div>
-              <p className="text-sm text-postup-navy/85 m-0 mb-0.5">{rec.dose}</p>
-              <p className="text-[11px] text-postup-muted m-0 mb-2.5">
-                {rec.duration}
-              </p>
+            <li key={rec.id} className="px-5 py-4">
+              <div className="flex items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="text-[15px] font-semibold text-sp-ink m-0">
+                      {rec.drug}
+                    </h4>
+                    <span
+                      className={`text-[10px] uppercase tracking-[0.06em] font-semibold rounded px-1.5 py-0.5 border ${kindMeta.chip}`}
+                    >
+                      {t(copy.provider[kindMeta.labelKey], locale)}
+                    </span>
+                  </div>
+                  <p className="m-0 mt-1 text-[13px] text-sp-text font-mono">
+                    {rec.dose}
+                    <span className="text-sp-subtle"> · </span>
+                    <span className="text-sp-muted">{rec.duration}</span>
+                  </p>
+                  <p className="text-[13px] text-sp-text leading-relaxed m-0 mt-2">
+                    {rec.rationale[locale]}
+                  </p>
+                </div>
 
-              <p className="text-[12px] text-postup-navy/85 leading-snug border-l-2 border-postup-blue/40 pl-2.5 mb-3">
-                {rec.rationale[locale]}
-              </p>
-
-              <div className="flex gap-2 mt-auto">
-                <button
-                  type="button"
-                  onClick={() => addToPlan(rec)}
-                  disabled={added}
-                  className={`flex-1 text-xs font-semibold rounded-full py-2 transition ${
-                    added
-                      ? "bg-postup-move-soft text-postup-green-dark cursor-default"
-                      : "bg-postup-blue text-white hover:bg-postup-blue-dark"
-                  }`}
-                >
-                  {added ? `✓ ${t(copy.provider.rxAdded, locale)}` : `+ ${t(copy.provider.rxAdd, locale)}`}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleWhy(rec)}
-                  className="text-xs font-semibold rounded-full px-3 py-2 border border-[var(--postup-border)] text-postup-navy hover:bg-white"
-                >
-                  {isOpen ? t(copy.provider.rxHide, locale) : t(copy.provider.rxWhy, locale)}
-                </button>
+                <div className="shrink-0 flex flex-col gap-1.5 w-32">
+                  <button
+                    type="button"
+                    onClick={() => addToPlan(rec)}
+                    disabled={added}
+                    className={`text-[12px] font-medium rounded-md py-1.5 px-3 transition ${
+                      added
+                        ? "bg-sp-success-bg text-sp-success border border-green-200 cursor-default"
+                        : "bg-sp-teal-600 text-white hover:bg-sp-teal-700"
+                    }`}
+                  >
+                    {added
+                      ? `✓ ${t(copy.provider.rxAdded, locale)}`
+                      : t(copy.provider.rxAdd, locale)}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleWhy(rec)}
+                    className="text-[12px] font-medium rounded-md py-1.5 px-3 border border-sp-line text-sp-text hover:bg-sp-canvas"
+                  >
+                    {isOpen
+                      ? t(copy.provider.rxHide, locale)
+                      : t(copy.provider.rxWhy, locale)}
+                  </button>
+                </div>
               </div>
 
               {isOpen && (
-                <div className="mt-3 rounded-xl bg-white border border-[var(--postup-border)] p-3 text-[12px] text-postup-navy/85 leading-relaxed">
+                <div className="mt-3 rounded-md border border-sp-line bg-sp-canvas p-4 text-[12.5px] text-sp-text leading-relaxed">
+                  <p className="text-[10px] uppercase tracking-[0.08em] text-sp-subtle font-semibold m-0 mb-2">
+                    Evidence
+                  </p>
                   {state.loading && !state.text && (
-                    <p className="text-postup-muted m-0">
+                    <p className="text-sp-muted m-0">
                       {state.searching
-                        ? `🔍 ${state.searching}`
+                        ? `Searching · ${state.searching}`
                         : t(copy.provider.evidenceSearching, locale)}
                     </p>
                   )}
                   {state.error && (
-                    <p className="text-orange-600 m-0">{state.error}</p>
+                    <p className="text-sp-danger m-0">{state.error}</p>
                   )}
                   {state.text && (
                     <CitedMarkdown text={state.text} citations={state.citations} />
@@ -269,10 +284,10 @@ export function RxRecommendations({
                   )}
                 </div>
               )}
-            </article>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -299,7 +314,7 @@ function CitedMarkdown({
                 href={cite.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-postup-blue underline-offset-2 hover:underline mx-0.5 text-[11px] font-semibold align-super"
+                className="text-sp-teal-700 hover:underline mx-0.5 text-[11px] font-semibold align-super"
               >
                 [{num}]
               </a>
@@ -320,18 +335,18 @@ function CitationList({
   locale: Locale;
 }) {
   return (
-    <div className="mt-3 pt-3 border-t border-[var(--postup-border)]">
-      <p className="text-[10px] uppercase tracking-wider font-semibold text-postup-muted m-0 mb-1.5">
+    <div className="mt-3 pt-3 border-t border-sp-line">
+      <p className="text-[10px] uppercase tracking-[0.08em] font-semibold text-sp-subtle m-0 mb-1.5">
         {t(copy.provider.evidenceSources, locale)}
       </p>
-      <ol className="m-0 pl-4 space-y-0.5 text-[11px]">
+      <ol className="m-0 pl-4 space-y-0.5 text-[11.5px]">
         {citations.map((c, i) => (
-          <li key={c.url} className="text-postup-muted">
+          <li key={c.url} className="text-sp-muted">
             <a
               href={c.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-postup-blue hover:underline"
+              className="text-sp-teal-700 hover:underline"
             >
               [{i + 1}] {c.title}
             </a>

@@ -222,3 +222,76 @@ export interface PlanItem {
   reason: string;
   addedAtIso: string;
 }
+
+// ────────────────────────────────────────────────────────────────
+// Chat transcripts (real patient-side chat) + AI-derived insights
+// ────────────────────────────────────────────────────────────────
+
+export interface TranscriptTurn {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: string;
+  pod?: number;
+}
+
+export interface PatientTranscript {
+  patientId: PatientId;
+  turns: TranscriptTurn[];
+}
+
+export type Sentiment =
+  | "very-negative"
+  | "negative"
+  | "neutral"
+  | "positive"
+  | "very-positive";
+
+export interface SentimentPoint {
+  pod: number;
+  sentiment: Sentiment;
+  score: number; // -1 to 1
+}
+
+export interface MoodTag {
+  label: string;
+  weight: number; // 0–1
+  example?: string;
+}
+
+export interface KeyQuote {
+  text: string;
+  pod: number;
+  why?: string;
+}
+
+export type ConcernSeverity = "info" | "warn" | "critical";
+
+export interface Concern {
+  topic: string;
+  detail: string;
+  pod: number;
+  severity: ConcernSeverity;
+}
+
+export interface PainNarrativeBlock {
+  pattern: string;
+  triggers: string[];
+  relievers: string[];
+}
+
+export interface PatientInsights {
+  patientId: PatientId;
+  generatedAt: string;
+  basedOnTurns: number;
+  basedOnPodRange: { start: number; end: number };
+  narrative: string;
+  painNarrative: PainNarrativeBlock;
+  overallSentiment: Sentiment;
+  sentimentTrend: SentimentPoint[];
+  moodTags: MoodTag[];
+  keyQuotes: KeyQuote[];
+  concerns: Concern[];
+  adherenceInsights: string[];
+  topicsForNextVisit: string[];
+}

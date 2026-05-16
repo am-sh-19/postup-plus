@@ -242,6 +242,46 @@ export const copy = {
       en: "Plan saved · patient will see updates on next sync",
       es: "Plan guardado · el paciente lo verá en la próxima sincronización",
     },
+    tabChart: { en: "Chart", es: "Expediente" },
+    tabSummary: { en: "Pain summary", es: "Resumen de dolor" },
+    summarySubtitle: {
+      en: "AI-condensed insights from the patient’s chat history.",
+      es: "Resumen de IA del historial de chat del paciente.",
+    },
+    summaryRefresh: { en: "Regenerate", es: "Regenerar" },
+    summaryRegenerating: { en: "Regenerating…", es: "Regenerando…" },
+    summaryEmptyTitle: { en: "No chat yet", es: "Sin chat todavía" },
+    summaryEmptyBody: {
+      en: "Insights will appear once the patient messages the care team.",
+      es: "Las ideas aparecerán cuando el paciente envíe mensajes.",
+    },
+    summaryLoading: {
+      en: "Reading chat history…",
+      es: "Leyendo historial de chat…",
+    },
+    summaryError: {
+      en: "Couldn’t generate insights — try again.",
+      es: "No se pudieron generar ideas — intente de nuevo.",
+    },
+    summaryBasedOn: { en: "Based on", es: "Basado en" },
+    summaryTurns: { en: "messages", es: "mensajes" },
+    summaryNarrative: { en: "How they're doing", es: "Cómo están" },
+    summaryPainPattern: { en: "Pain pattern", es: "Patrón de dolor" },
+    summaryTriggers: { en: "Triggers", es: "Desencadenantes" },
+    summaryRelievers: { en: "What helps", es: "Lo que ayuda" },
+    summarySentimentTitle: { en: "Sentiment trend", es: "Tendencia de ánimo" },
+    summaryMoodTitle: { en: "Mood across chat", es: "Estado de ánimo" },
+    summaryQuotesTitle: { en: "Key quotes", es: "Citas clave" },
+    summaryConcernsTitle: { en: "Flagged concerns", es: "Preocupaciones marcadas" },
+    summaryAdherenceTitle: { en: "Adherence observations", es: "Adherencia observada" },
+    summaryNextVisitTitle: {
+      en: "For next visit",
+      es: "Para la próxima visita",
+    },
+    summaryOverallLabel: {
+      en: "Overall sentiment",
+      es: "Sentimiento general",
+    },
   },
 } as const;
 

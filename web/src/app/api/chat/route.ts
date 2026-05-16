@@ -9,6 +9,7 @@ import {
 } from "ai";
 import { generateMockReply } from "@/lib/chat-mock";
 import { PATIENTS } from "@/lib/patients";
+import { appendTurn } from "@/lib/transcripts";
 import type { Locale, Patient, PatientId } from "@/lib/types";
 
 export const maxDuration = 30;
@@ -80,14 +81,42 @@ export async function POST(req: Request) {
     locale?: Locale;
   } = await req.json();
 
-  const patient = PATIENTS[patientId ?? "emily"];
+  const resolvedPatientId: PatientId = patientId ?? "emily";
+  const patient = PATIENTS[resolvedPatientId];
   const lang: Locale = locale ?? "en";
   const chatMessages = conversationOnly(messages ?? []);
+
+  // Persist the latest patient turn so the provider's Pain Summary tab can
+  // summarize real chat history. Fire-and-forget; failures are logged only.
+  const lastUser = [...chatMessages].reverse().find((m) => m.role === "user");
+  if (lastUser) {
+    const text = lastUser.parts
+      .map((p) => ("text" in p && typeof p.text === "string" ? p.text : ""))
+      .join("")
+      .trim();
+    if (text) {
+      appendTurn(resolvedPatientId, { role: "user", content: text }).catch(
+        (err) => console.error("[chat] failed to persist user turn", err),
+      );
+    }
+  }
+
+  const persistAssistant = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    appendTurn(resolvedPatientId, {
+      role: "assistant",
+      content: trimmed,
+    }).catch((err) =>
+      console.error("[chat] failed to persist assistant turn", err),
+    );
+  };
 
   const useMock = !process.env.ANTHROPIC_API_KEY;
 
   if (useMock) {
     const reply = generateMockReply(patient, lang, chatMessages);
+    persistAssistant(reply);
     return mockStreamResponse(reply, messages);
   }
 
@@ -96,11 +125,13 @@ export async function POST(req: Request) {
       model: anthropic("claude-sonnet-4-6"),
       system: buildSystemPrompt(patient, lang),
       messages: await convertToModelMessages(chatMessages),
+      onFinish: ({ text }) => persistAssistant(text),
     });
 
     return result.toUIMessageStreamResponse({ originalMessages: messages });
   } catch {
     const reply = generateMockReply(patient, lang, chatMessages);
+    persistAssistant(reply);
     return mockStreamResponse(reply, messages);
   }
 }

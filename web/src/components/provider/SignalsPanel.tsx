@@ -10,30 +10,24 @@ interface SignalsPanelProps {
   onFocus?: (signal: Signal) => void;
 }
 
-const SEVERITY_STYLES: Record<
+const SEVERITY: Record<
   SignalSeverity,
-  { dot: string; border: string; bg: string; text: string; emoji: string }
+  { rail: string; chip: string; label: string }
 > = {
   critical: {
-    dot: "bg-red-500",
-    border: "border-l-red-500",
-    bg: "bg-red-50",
-    text: "text-red-700",
-    emoji: "🔴",
+    rail: "before:bg-sp-danger",
+    chip: "bg-sp-danger-bg text-sp-danger border-red-200",
+    label: "Critical",
   },
   warn: {
-    dot: "bg-orange-500",
-    border: "border-l-orange-500",
-    bg: "bg-orange-50",
-    text: "text-orange-700",
-    emoji: "🟠",
+    rail: "before:bg-sp-warn",
+    chip: "bg-sp-warn-bg text-sp-warn border-amber-200",
+    label: "Warning",
   },
   info: {
-    dot: "bg-yellow-500",
-    border: "border-l-yellow-500",
-    bg: "bg-yellow-50",
-    text: "text-yellow-700",
-    emoji: "🟡",
+    rail: "before:bg-sp-info",
+    chip: "bg-sp-info-bg text-sp-info border-gray-200",
+    label: "Info",
   },
 };
 
@@ -46,65 +40,73 @@ export function SignalsPanel({ signals, locale, onFocus }: SignalsPanelProps) {
 
   return (
     <section
-      className="bg-white rounded-[var(--postup-rounded)] p-5 shadow-sm border border-[var(--postup-border)]/60 h-full flex flex-col"
-      style={{ boxShadow: "0 1px 3px rgba(2, 31, 83, 0.05), 0 8px 24px rgba(2, 31, 83, 0.03)" }}
+      className="bg-white rounded-lg border border-sp-line h-full flex flex-col"
       aria-label="Signal alerts"
     >
-      <header className="flex items-baseline justify-between mb-3">
-        <span className="text-[11px] uppercase tracking-wider text-postup-muted font-semibold">
-          ⚠ {t(copy.provider.signalsTitle, locale)}
-        </span>
+      <header className="flex items-baseline justify-between px-5 py-3 border-b border-sp-line-soft">
+        <h3 className="text-[11px] uppercase tracking-[0.08em] text-sp-subtle font-semibold m-0">
+          {t(copy.provider.signalsTitle, locale)}
+        </h3>
         {signals.length > 0 && (
-          <span className="text-[11px] font-semibold text-postup-blue bg-postup-soft rounded-full px-2.5 py-0.5">
+          <span className="text-[11px] font-semibold text-sp-teal-800 bg-sp-teal-50 border border-sp-teal-100 rounded-full px-2 py-0.5">
             {signals.length} {t(copy.provider.signalsActive, locale)}
           </span>
         )}
       </header>
 
       {signals.length === 0 && (
-        <div className="flex-1 flex items-center justify-center text-postup-muted text-sm">
-          <span className="text-2xl mr-2">✅</span>
-          {t(copy.provider.signalsEmpty, locale)}
+        <div className="flex-1 flex items-center justify-center text-sp-muted text-sm py-8">
+          <span className="text-sp-success font-medium">
+            ✓ {t(copy.provider.signalsEmpty, locale)}
+          </span>
         </div>
       )}
 
       {signals.length > 0 && (
-        <div className="space-y-2 flex-1 overflow-y-auto pr-1">
+        <ul className="flex-1 overflow-y-auto m-0 p-0 list-none divide-y divide-sp-line-soft">
           {visible.map((sig) => {
-            const style = SEVERITY_STYLES[sig.severity];
+            const sev = SEVERITY[sig.severity];
             return (
-              <button
-                key={sig.id}
-                type="button"
-                onClick={() => onFocus?.(sig)}
-                className={`w-full text-left rounded-xl border-l-[3px] ${style.border} ${style.bg} px-3 py-2.5 hover:brightness-95 transition`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-semibold text-postup-navy">
-                    {style.emoji} {sig.title[locale]}
-                  </span>
-                </div>
-                <p className="text-xs text-postup-navy/80 mt-1 m-0 leading-snug">
-                  {sig.detail[locale]}
-                </p>
-                {sig.expected && (
-                  <p className="text-[11px] text-postup-muted italic mt-1 m-0">
-                    {sig.expected[locale]}
+              <li key={sig.id}>
+                <button
+                  type="button"
+                  onClick={() => onFocus?.(sig)}
+                  className={`relative w-full text-left px-5 py-3 pl-7 hover:bg-sp-canvas transition before:absolute before:left-0 before:top-3 before:bottom-3 before:w-[3px] before:rounded-r ${sev.rail}`}
+                >
+                  <div className="flex items-baseline justify-between gap-3 mb-0.5">
+                    <span className="text-[13px] font-semibold text-sp-ink leading-tight">
+                      {sig.title[locale]}
+                    </span>
+                    <span
+                      className={`shrink-0 text-[10px] uppercase tracking-[0.06em] font-semibold rounded px-1.5 py-0.5 border ${sev.chip}`}
+                    >
+                      {sev.label}
+                    </span>
+                  </div>
+                  <p className="text-[12px] text-sp-text m-0 leading-snug">
+                    {sig.detail[locale]}
                   </p>
-                )}
-              </button>
+                  {sig.expected && (
+                    <p className="text-[11px] text-sp-muted m-0 mt-0.5">
+                      {sig.expected[locale]}
+                    </p>
+                  )}
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
       )}
 
       {hidden > 0 && (
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className="mt-3 text-xs font-semibold text-postup-blue hover:underline self-start"
+          className="text-[11px] font-semibold text-sp-teal-700 hover:text-sp-teal-800 px-5 py-2 text-left border-t border-sp-line-soft"
         >
-          {expanded ? "▲" : `+${hidden} ${t(copy.provider.signalsMore, locale)} ▾`}
+          {expanded
+            ? "▲ Show fewer"
+            : `+${hidden} ${t(copy.provider.signalsMore, locale)}`}
         </button>
       )}
     </section>

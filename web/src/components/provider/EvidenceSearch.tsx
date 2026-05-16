@@ -63,7 +63,6 @@ export function EvidenceSearch({ chart, signals, locale }: EvidenceSearchProps) 
             context: { patientChart: chart, signals },
           }),
         });
-
         if (!res.ok || !res.body) {
           setState({
             ...EMPTY,
@@ -71,7 +70,6 @@ export function EvidenceSearch({ chart, signals, locale }: EvidenceSearchProps) 
           });
           return;
         }
-
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
@@ -85,23 +83,19 @@ export function EvidenceSearch({ chart, signals, locale }: EvidenceSearchProps) 
             const ev = parseContractEvent(line);
             if (!ev) continue;
             setState((cur) => {
-              if (ev.type === "text_delta") {
+              if (ev.type === "text_delta")
                 return { ...cur, text: cur.text + ev.text };
-              }
-              if (ev.type === "searching") {
+              if (ev.type === "searching")
                 return { ...cur, searching: ev.query };
-              }
-              if (ev.type === "done") {
+              if (ev.type === "done")
                 return {
                   ...cur,
                   loading: false,
                   citations: ev.citations,
                   searching: "",
                 };
-              }
-              if (ev.type === "error") {
+              if (ev.type === "error")
                 return { ...cur, loading: false, error: ev.error };
-              }
               return cur;
             });
           }
@@ -121,89 +115,93 @@ export function EvidenceSearch({ chart, signals, locale }: EvidenceSearchProps) 
 
   return (
     <section
-      className="bg-white rounded-[var(--postup-rounded)] p-5 shadow-sm border border-[var(--postup-border)]/60"
-      style={{ boxShadow: "0 1px 3px rgba(2, 31, 83, 0.05), 0 8px 24px rgba(2, 31, 83, 0.03)" }}
+      className="bg-white rounded-lg border border-sp-line"
       aria-label="Evidence search"
     >
-      <header className="mb-3">
-        <h3 className="text-base font-semibold text-postup-navy m-0">
-          🔎 {t(copy.provider.evidenceTitle, locale)}
+      <header className="px-5 py-3 border-b border-sp-line-soft">
+        <h3 className="text-[15px] font-semibold text-sp-ink m-0 tracking-tight">
+          {t(copy.provider.evidenceTitle, locale)}
         </h3>
-        <p className="text-xs text-postup-muted m-0 mt-0.5">
+        <p className="text-[12px] text-sp-muted m-0 mt-0.5">
           {t(copy.provider.evidenceHint, locale)}
         </p>
       </header>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          run(query);
-        }}
-        className="flex gap-2 mb-3"
-      >
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t(copy.provider.evidencePlaceholder, locale)}
-          className="flex-1 rounded-full border border-[#c5d4e8] bg-white px-4 py-2.5 text-sm focus:outline-none focus:border-postup-blue"
-        />
-        <button
-          type="submit"
-          disabled={state.loading}
-          className="rounded-full bg-postup-blue text-white text-sm font-semibold px-5 py-2.5 hover:bg-postup-blue-dark disabled:opacity-60"
+      <div className="px-5 py-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            run(query);
+          }}
+          className="flex gap-2 mb-3"
         >
-          {state.loading
-            ? t(copy.provider.evidenceSearching, locale)
-            : t(copy.provider.evidenceSearch, locale)}
-        </button>
-      </form>
-
-      <div className="flex flex-wrap gap-1.5 mb-3">
-        <span className="text-[10px] uppercase tracking-wider text-postup-muted font-semibold pt-1">
-          {t(copy.provider.evidenceSuggested, locale)}:
-        </span>
-        {SEED_QUERIES[locale].map((q) => (
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t(copy.provider.evidencePlaceholder, locale)}
+            className="flex-1 rounded-md border border-sp-line bg-white px-3.5 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-sp-teal-200 focus:border-sp-teal-500"
+          />
           <button
-            key={q}
-            type="button"
-            onClick={() => {
-              setQuery(q);
-              run(q);
-            }}
-            className="text-[11px] rounded-full bg-postup-bg border border-[var(--postup-border)] px-2.5 py-1 text-postup-navy hover:bg-postup-soft"
+            type="submit"
+            disabled={state.loading}
+            className="rounded-md bg-sp-teal-600 text-white text-[13px] font-medium px-4 py-2 hover:bg-sp-teal-700 disabled:opacity-60"
           >
-            {q}
+            {state.loading
+              ? t(copy.provider.evidenceSearching, locale)
+              : t(copy.provider.evidenceSearch, locale)}
           </button>
-        ))}
+        </form>
+
+        <div className="flex flex-wrap gap-1.5 items-center">
+          <span className="text-[10px] uppercase tracking-[0.08em] text-sp-subtle font-semibold">
+            {t(copy.provider.evidenceSuggested, locale)}
+          </span>
+          {SEED_QUERIES[locale].map((q) => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => {
+                setQuery(q);
+                run(q);
+              }}
+              className="text-[11.5px] rounded-md bg-sp-canvas border border-sp-line px-2.5 py-1 text-sp-text hover:bg-sp-teal-50 hover:border-sp-teal-200 hover:text-sp-teal-800"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
       </div>
 
       {(state.text || state.searching || state.error || state.citations.length > 0) && (
-        <div className="rounded-xl bg-postup-bg/60 border border-[var(--postup-border)] p-4 text-[13px] text-postup-navy/90 leading-relaxed">
+        <div className="border-t border-sp-line-soft bg-sp-canvas px-5 py-4 text-[13px] text-sp-text leading-relaxed">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-sp-subtle font-semibold m-0 mb-2">
+            Answer
+          </p>
           {state.searching && (
-            <p className="text-postup-muted text-xs m-0 mb-2">
-              🔍 {state.searching}
+            <p className="text-sp-muted text-[12px] m-0 mb-2">
+              Searching · {state.searching}
             </p>
           )}
           {state.error && (
-            <p className="text-orange-600 m-0">{state.error}</p>
+            <p className="text-sp-danger m-0">{state.error}</p>
           )}
           {state.text && (
             <CitedMarkdown text={state.text} citations={state.citations} />
           )}
           {state.citations.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-[var(--postup-border)]">
-              <p className="text-[10px] uppercase tracking-wider font-semibold text-postup-muted m-0 mb-1.5">
+            <div className="mt-3 pt-3 border-t border-sp-line">
+              <p className="text-[10px] uppercase tracking-[0.08em] text-sp-subtle font-semibold m-0 mb-1.5">
                 {t(copy.provider.evidenceSources, locale)}
               </p>
               <ol className="m-0 pl-4 space-y-0.5 text-[12px]">
                 {state.citations.map((c, i) => (
-                  <li key={c.url} className="text-postup-muted">
+                  <li key={c.url} className="text-sp-muted">
                     <a
                       href={c.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-postup-blue hover:underline"
+                      className="text-sp-teal-700 hover:underline"
                     >
                       [{i + 1}] {c.title}
                     </a>
@@ -240,7 +238,7 @@ function CitedMarkdown({
                 href={cite.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-postup-blue underline-offset-2 hover:underline mx-0.5 text-[11px] font-semibold align-super"
+                className="text-sp-teal-700 hover:underline mx-0.5 text-[11px] font-semibold align-super"
               >
                 [{num}]
               </a>

@@ -10,6 +10,7 @@ import { getPatient, getPatientsRecord } from "@/lib/data";
 import { getPatientSession, setPatientSession } from "@/lib/session";
 import type { ChatMessage, Locale } from "@/lib/types";
 import { ChatPane } from "./ChatPane";
+import { DownloadPlanButton } from "./DownloadPlanButton";
 import { FaqSection } from "./FaqSection";
 import { MedsPanel } from "./MedsPanel";
 import { MovementBanner } from "./MovementBanner";
@@ -132,6 +133,7 @@ export function DashboardApp() {
             locale={locale}
             onLog={addSystemMessage}
           />
+          <DownloadPlanButton patient={patient} locale={locale} />
           <FaqSection locale={locale} />
         </aside>
       </div>
