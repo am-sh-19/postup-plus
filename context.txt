@@ -1,0 +1,21 @@
+We're in a hackathon focused on building an orthopedic surgery related solution. Our focus is to do a post-operative care pain management system that tackles a lot of the issues that orthopedic clinics face. Mostly the issue is around pain management. We have a few ideas about what the scope would include written in here: 
+
+Scope:
+	•	fake login screen (Patient Last Name, MRN (clinic password)
+	◦	Emily Person
+	◦	Gabriela
+	•	Patient details from story / clinic
+	◦	fake loading patient chart /
+	◦	load past prescriptions / past surgeries
+	•	patient q&a chatbot (left pane)
+	•	big pain button - opens something
+	•	pain slider (describe with actions / range) or number slider
+	◦	face image for pain could be in this / scale
+	◦	pain over time
+	•	Translation Output depending on language
+
+Post-Scope
+	•	medical image generation
+	•	open evidence pain prescription dosage
+	•	doctor view that shows this
+	•	send a text to collect data

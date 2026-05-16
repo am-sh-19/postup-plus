@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PostUp+ — Chat-first (Calm)</title>
+<style>
+  :root {
+    /* Sampled from PostUp+ logo */
+    --navy: #021f53;
+    --blue: #2a8ce0;
+    --blue-dark: #0f74d6;
+    --green: #65ca79;
+    --green-dark: #2aae72;
+    --teal: #5aa6e6;
+    /* Neutrals */
+    --bg: #f5f7fa;
+    --bg-2: #eef2f7;
+    --panel: #ffffff;
+    --text: var(--navy);
+    --muted: #5a6d8a;
+    --accent: var(--blue);
+    --accent-2: var(--green);
+    --soft: #e8f4fd;
+    --move: var(--green-dark);
+    --move-soft: #e8f7ec;
+    --rounded: 22px;
+    --sidebar-w: 40%;
+    --chat-w: 60%;
+    --border: rgba(2, 31, 83, 0.1);
+    --shadow-blue: rgba(42, 140, 224, 0.22);
+    --shadow-green: rgba(42, 174, 114, 0.2);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--text);
+    font: 16px/1.55 ui-rounded, "SF Pro Rounded", "Avenir Next", system-ui, sans-serif;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100dvh;
+  }
+
+  .topbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+  .brand-logo img {
+    height: 42px;
+    width: auto;
+    display: block;
+  }
+  .topbar-meta { display: flex; align-items: center; gap: 16px; }
+  .greeting-inline { font-size: 14px; color: var(--muted); }
+  .greeting-inline strong { color: var(--text); font-weight: 600; }
+  .greeting-inline .name { color: var(--green-dark); }
+  .lang {
+    background: var(--panel); border-radius: 999px; padding: 4px 6px; font-size: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .lang span { padding: 4px 10px; border-radius: 999px; color: var(--muted); cursor: pointer; }
+  .lang span.sel { background: var(--accent); color: #fff; font-weight: 600; }
+
+  .main {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    padding: 0 16px 16px;
+    gap: 16px;
+  }
+
+  /* —— Chat 60% —— */
+  .chat-pane {
+    flex: 0 0 var(--chat-w);
+    max-width: var(--chat-w);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .chat-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border-radius: var(--rounded);
+    padding: 22px 26px;
+    box-shadow: 0 1px 3px rgba(2, 31, 83, 0.05), 0 8px 24px rgba(2, 31, 83, 0.04);
+    min-height: 0;
+  }
+  .chat-header { margin-bottom: 14px; flex-shrink: 0; }
+  .chat-header h1 { margin: 0 0 4px; font-size: 21px; font-weight: 600; letter-spacing: -0.3px; }
+  .chat-header p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  .chat-stream {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 6px;
+    min-height: 0;
+  }
+  .bubble {
+    padding: 13px 17px;
+    border-radius: 20px;
+    max-width: 82%;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .bubble.bot { background: var(--soft); align-self: flex-start; border-bottom-left-radius: 6px; }
+  .bubble.user { background: var(--accent-2); color: #fff; align-self: flex-end; border-bottom-right-radius: 6px; }
+  .bubble.bot small { display: block; color: var(--muted); font-size: 11px; margin-top: 6px; }
+  .bubble.system {
+    align-self: center; max-width: 92%; text-align: center;
+    background: var(--bg-2); color: var(--muted); font-size: 13px;
+    padding: 10px 16px; border-radius: 12px;
+  }
+
+  .compose {
+    flex-shrink: 0;
+    display: flex; gap: 10px; margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .compose input {
+    flex: 1; padding: 14px 18px; border-radius: 999px;
+    border: 1px solid #c5d4e8; background: #fff; font-size: 15px; font-family: inherit;
+  }
+  .compose input:focus { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .compose button {
+    padding: 14px 24px; border-radius: 999px; background: var(--blue); color: #fff;
+    border: 0; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 15px;
+  }
+
+  /* —— Sidebar 40% —— */
+  .sidebar {
+    flex: 0 0 var(--sidebar-w);
+    max-width: var(--sidebar-w);
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+
+  /* Movement reminder banner */
+  .move-banner {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, var(--move-soft) 0%, #fff 100%);
+    border: 1px solid rgba(42, 174, 114, 0.28);
+    border-radius: 18px;
+    box-shadow: 0 2px 8px var(--shadow-green);
+  }
+  .move-banner .pulse {
+    font-size: 28px;
+    line-height: 1;
+    animation: walk-pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes walk-pulse {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.12) rotate(-6deg); }
+  }
+  .move-banner .copy { flex: 1; min-width: 0; }
+  .move-banner .copy strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--move);
+    margin-bottom: 2px;
+  }
+  .move-banner .copy p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .move-banner .copy .due {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue-dark);
+  }
+  .move-banner .log-now {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    background: var(--move);
+    color: #fff;
+    border: 0;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .move-banner .log-now:hover { filter: brightness(1.06); }
+
+  /* Pain panel — inline 1–10 */
+  .pain-panel {
+    flex-shrink: 0;
+    background: var(--panel);
+    border-radius: var(--rounded);
+    padding: 18px 18px 16px;
+    box-shadow: 0 1px 3px rgba(50, 40, 30, 0.05);
+  }
+  .pain-panel h2 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .pain-panel .hint {
+    margin: 0 0 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .pain-hero {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--soft);
+    border-radius: 16px;
+    margin-bottom: 14px;
+  }
+  .pain-hero .big-emoji {
+    font-size: 56px;
+    line-height: 1;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: emoji-pop 0.35s ease;
+  }
+  @keyframes emoji-pop {
+    0% { transform: scale(0.85); }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+  .pain-hero .meta { flex: 1; }
+  .pain-hero .level-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .pain-hero .level-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .pain-hero .level-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .pain-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 2px 6px;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+  }
+  .pain-step:hover {
+    background: var(--soft);
+    transform: translateY(-2px);
+  }
+  .pain-step.sel {
+    border-color: var(--accent);
+    background: var(--soft);
+    box-shadow: 0 4px 12px var(--shadow-blue);
+    transform: scale(1.06);
+  }
+  .pain-step .em {
+    font-size: 26px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+  .pain-step.sel .em {
+    font-size: 32px;
+    animation: wiggle 0.5s ease;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-8deg) scale(1.05); }
+    75% { transform: rotate(8deg) scale(1.05); }
+  }
+  .pain-step .num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .pain-step.sel .num { color: var(--accent); }
+
+  .slider-wrap { margin-bottom: 12px; }
+  .slider-wrap .track-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  input[type="range"]#painSlider {
+    width: 100%;
+    height: 12px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: linear-gradient(90deg, #65ca79 0%, #4bae97 18%, #5aa6e6 40%, #2a8ce0 65%, #0f74d6 82%, #021f53 100%);
+    border-radius: 999px;
+    outline: none;
+  }
+  input[type="range"]#painSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px;
+    height: 28px;
+    background: var(--panel);
+    border: 3px solid var(--accent);
+    border-radius: 50%;
+    cursor: grab;
+    box-shadow: 0 2px 10px rgba(224, 122, 60, 0.4);
+    font-size: 14px;
+  }
+
+  .pain-actions-toggle {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg);
+    border: 0;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: 8px;
+  }
+  .pain-actions-toggle:hover { color: var(--text); background: var(--soft); }
+
+  .actions-collapsible {
+    display: none;
+    margin-bottom: 10px;
+  }
+  .actions-collapsible.open { display: block; }
+  .actions-collapsible h3 { font-size: 13px; font-weight: 600; margin: 0 0 8px; }
+  .action-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 12px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .action-row .ic { font-size: 18px; }
+  .action-row .label { flex: 1; }
+  .action-chips { display: flex; gap: 3px; flex-wrap: wrap; }
+  .chip {
+    padding: 3px 8px; border-radius: 999px; font-size: 10px; cursor: pointer;
+    background: #fff; color: var(--muted); border: 1px solid #ead8be;
+  }
+  .chip.sel { background: var(--accent-2); color: #fff; border-color: transparent; font-weight: 600; }
+  .chip.no.sel { background: #b86a52; }
+  .chip.partial.sel { background: var(--accent); }
+
+  .save-pain {
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(224, 122, 60, 0.22);
+  }
+
+  /* Movement logger */
+  .movement-log {
+    flex-shrink: 0;
+    background: var(--panel);
+    border-radius: var(--rounded);
+    padding: 16px 18px;
+    box-shadow: 0 1px 3px rgba(50, 40, 30, 0.05);
+  }
+  .movement-log h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .movement-log .sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .movement-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-pill {
+    text-align: center;
+    padding: 10px 6px;
+    background: var(--bg);
+    border-radius: 12px;
+  }
+  .stat-pill .v { font-size: 18px; font-weight: 700; color: var(--move); }
+  .stat-pill .k { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .hour-slots {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+  }
+  .hour-slot {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: 1px solid rgba(125, 112, 95, 0.15);
+    border-radius: 10px;
+    background: var(--bg);
+    cursor: pointer;
+    font-family: inherit;
+    padding: 4px 2px;
+    transition: all 0.15s ease;
+  }
+  .hour-slot:hover { border-color: var(--move); background: var(--move-soft); }
+  .hour-slot.done {
+    background: var(--move-soft);
+    border-color: var(--move);
+  }
+  .hour-slot .t { font-size: 9px; color: var(--muted); font-weight: 600; }
+  .hour-slot.done .t { color: var(--move); }
+  .hour-slot .ic { font-size: 14px; line-height: 1; }
+  .hour-slot.done .ic::after { content: "✓"; font-size: 10px; color: var(--move); }
+
+  /* Nav + FAQ */
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--panel);
+    border: 0;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    box-shadow: 0 1px 3px rgba(50, 40, 30, 0.05);
+  }
+  .nav-item:hover { background: var(--soft); }
+  .nav-item .ic { font-size: 24px; }
+  .nav-item .title { font-size: 14px; font-weight: 600; }
+  .nav-item .desc { font-size: 11px; color: var(--muted); display: block; }
+  .nav-item .chev { color: var(--muted); margin-left: auto; }
+
+  .faq-preview {
+    flex-shrink: 0;
+    background: var(--panel);
+    border-radius: var(--rounded);
+    padding: 14px 16px;
+    box-shadow: 0 1px 3px rgba(50, 40, 30, 0.05);
+  }
+  .faq-preview h3 {
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .faq-q {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(125, 112, 95, 0.1);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+  .faq-q:last-child { border-bottom: 0; }
+  .faq-q:hover { color: var(--accent); }
+
+  /* Modals */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(45, 38, 32, 0.45);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--panel);
+    border-radius: var(--rounded);
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px;
+    box-shadow: 0 24px 64px rgba(50, 40, 30, 0.2);
+    position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 36px; height: 36px; border: 0; background: var(--bg);
+    border-radius: 50%; cursor: pointer; font-size: 20px; color: var(--muted);
+  }
+  .modal h2 { margin: 0 0 6px; font-size: 22px; font-weight: 600; }
+  .modal .hint { color: var(--muted); font-size: 14px; margin-bottom: 22px; }
+
+  .med-card {
+    background: var(--bg); border-radius: 16px;
+    padding: 18px 20px; margin-bottom: 12px;
+  }
+  .med-card .med-name { font-size: 17px; font-weight: 600; margin: 0 0 4px; }
+  .med-card .med-purpose { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+  .med-schedule { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .med-stat { background: var(--panel); padding: 12px 14px; border-radius: 12px; }
+  .med-stat .k { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+  .med-stat .v { font-size: 15px; font-weight: 600; margin-top: 2px; }
+  .med-warning {
+    margin-top: 16px; padding: 14px 16px; background: var(--soft);
+    border-radius: 14px; font-size: 13px; color: var(--muted); line-height: 1.5;
+  }
+
+  .faq-list .faq-item { border-bottom: 1px solid rgba(125, 112, 95, 0.12); padding: 16px 0; }
+  .faq-list .faq-item:last-child { border-bottom: 0; }
+  .faq-list .q {
+    font-weight: 600; font-size: 15px; cursor: pointer;
+    display: flex; justify-content: space-between; gap: 12px;
+  }
+  .faq-list .a { font-size: 14px; color: var(--muted); line-height: 1.55; margin-top: 10px; display: none; }
+  .faq-list .faq-item.open .a { display: block; }
+  .faq-list .faq-item.open .q { color: var(--accent); }
+
+  @media (max-width: 1024px) {
+    :root { --chat-w: 55%; --sidebar-w: 45%; }
+    .pain-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .main { flex-direction: column; }
+    .chat-pane, .sidebar { flex: none; max-width: 100%; width: 100%; min-width: 0; }
+    .sidebar { max-height: 50vh; }
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">PostUp<span class="plus">+</span></div>
+      <div class="topbar-meta">
+        <div class="greeting-inline">Day 7 post-op · <strong><span class="name">Emily</span> Person</strong></div>
+        <div class="lang"><span class="sel">English</span><span>Español</span></div>
+      </div>
+    </header>
+
+    <div class="main">
+      <section class="chat-pane" aria-label="Care chat">
+        <div class="chat-card">
+          <div class="chat-header">
+            <h1>Talk to your care team</h1>
+            <p>Ask about pain, medications, or recovery. Answers are tailored to your chart.</p>
+          </div>
+          <div class="chat-stream" id="chatStream">
+            <div class="bubble bot">Hi Emily, I'm here to help with your recovery. How's the knee feeling today?</div>
+            <div class="bubble user">It's swollen and hurts when I stand up</div>
+            <div class="bubble bot">
+              That's common on day 7 after ACL reconstruction. Try ice for 20 minutes and keep the knee elevated.
+              <small>PostUp+ · 8:42 AM</small>
+            </div>
+            <div class="bubble system">Log your pain on the right (1–10). Try to walk <strong>5 minutes every hour</strong> — use the movement logger when you do.</div>
+            <div class="bubble user">When can I shower?</div>
+            <div class="bubble bot">
+              Keep the incision dry until sutures come out on day 14. Sponge bathing only until then.
+              <small>PostUp+ · 8:43 AM</small>
+            </div>
+          </div>
+          <div class="compose">
+            <input type="text" placeholder="Ask a question about your recovery…" id="chatInput" />
+            <button type="button" id="sendBtn">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="sidebar" aria-label="Check-in and tools">
+        <!-- Movement banner -->
+        <div class="move-banner" id="moveBanner">
+          <span class="pulse" aria-hidden="true">🚶‍♀️</span>
+          <div class="copy">
+            <strong>Move a little, often</strong>
+            <p>Walk for <strong>5 minutes every hour</strong> — short, frequent movement helps recovery and prevents stiffness.</p>
+            <span class="due" id="moveDue">⏱ Next walk due in 12 min</span>
+          </div>
+          <button type="button" class="log-now" id="logWalkBanner">Log walk</button>
+        </div>
+
+        <!-- Inline pain 1–10 -->
+        <section class="pain-panel" aria-label="Pain check-in">
+          <h2>How much pain right now?</h2>
+          <p class="hint">Tap a number or drag the slider — 1 is none, 10 is worst imaginable.</p>
+
+          <div class="pain-hero">
+            <span class="big-emoji" id="bigEmoji" aria-hidden="true">😕</span>
+            <div class="meta">
+              <div class="level-num"><span id="painValue">5</span><span style="font-size:16px;color:var(--muted)">/10</span></div>
+              <div class="level-label" id="painLabel">Moderate</div>
+              <div class="level-desc" id="painDesc">Noticeable but you can function</div>
+            </div>
+          </div>
+
+          <div class="pain-grid" id="painGrid" role="group" aria-label="Pain level 1 to 10"></div>
+
+          <div class="slider-wrap">
+            <div class="track-labels"><span>😄 No pain</span><span>😭 Worst</span></div>
+            <input type="range" id="painSlider" min="1" max="10" value="5" step="1" aria-valuemin="1" aria-valuemax="10" />
+          </div>
+
+          <button type="button" class="pain-actions-toggle" id="toggleActions">＋ What can you do right now?</button>
+          <div class="actions-collapsible" id="actionsPanel">
+            <h3>Functional check</h3>
+            <div class="action-row">
+              <span class="ic">🚶</span>
+              <span class="label">Walk across room</span>
+              <div class="action-chips" data-action="walk">
+                <span class="chip">Yes</span><span class="chip partial sel">Help</span><span class="chip no">No</span>
+              </div>
+            </div>
+            <div class="action-row">
+              <span class="ic">🪑</span>
+              <span class="label">Sit 10 min</span>
+              <div class="action-chips" data-action="sit">
+                <span class="chip sel">Yes</span><span class="chip partial">Help</span><span class="chip no">No</span>
+              </div>
+            </div>
+            <div class="action-row">
+              <span class="ic">🪜</span>
+              <span class="label">One stair</span>
+              <div class="action-chips" data-action="stairs">
+                <span class="chip">Yes</span><span class="chip partial">Help</span><span class="chip no sel">No</span>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="save-pain" id="savePain">Save pain check-in</button>
+        </section>
+
+        <!-- Daily movement logger -->
+        <section class="movement-log" aria-label="Daily movement log">
+          <h3>🗓 Today's movement</h3>
+          <p class="sub">Tap each hour when you complete a 5‑min walk</p>
+          <div class="movement-stats">
+            <div class="stat-pill"><div class="v" id="walkCount">4</div><div class="k">Walks</div></div>
+            <div class="stat-pill"><div class="v" id="walkMins">20</div><div class="k">Minutes</div></div>
+            <div class="stat-pill"><div class="v" id="walkGoal">8</div><div class="k">Goal</div></div>
+          </div>
+          <div class="hour-slots" id="hourSlots"></div>
+        </section>
+
+        <nav class="sidebar-nav">
+          <button type="button" class="nav-item" id="openMeds">
+            <span class="ic">💊</span>
+            <span><span class="title">Your medications</span><span class="desc">Doses & schedule</span></span>
+            <span class="chev">›</span>
+          </button>
+          <button type="button" class="nav-item" id="openFaq">
+            <span class="ic">❓</span>
+            <span><span class="title">All FAQs</span><span class="desc">Common questions</span></span>
+            <span class="chev">›</span>
+          </button>
+        </nav>
+
+        <div class="faq-preview">
+          <h3>Quick answers</h3>
+          <div class="faq-q" data-faq="0">When can I shower?</div>
+          <div class="faq-q" data-faq="1">Is swelling normal on day 7?</div>
+          <div class="faq-q" data-faq="2">When should I call the clinic?</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Meds modal -->
+  <div class="overlay" id="medsOverlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <button type="button" class="modal-close" data-close="medsOverlay" aria-label="Close">×</button>
+      <h2>Your medications</h2>
+      <p class="hint">Current prescriptions — take only as directed.</p>
+      <div class="med-card">
+        <p class="med-name">💊 Ibuprofen (Advil)</p>
+        <p class="med-purpose">Pain & swelling</p>
+        <div class="med-schedule">
+          <div class="med-stat"><div class="k">Dose</div><div class="v">600 mg</div></div>
+          <div class="med-stat"><div class="k">How often</div><div class="v">Every 6 hrs</div></div>
+          <div class="med-stat"><div class="k">Max / day</div><div class="v">4 doses</div></div>
+          <div class="med-stat"><div class="k">With</div><div class="v">Food</div></div>
+        </div>
+      </div>
+      <div class="med-card">
+        <p class="med-name">💊 Acetaminophen (Tylenol)</p>
+        <p class="med-purpose">Breakthrough pain</p>
+        <div class="med-schedule">
+          <div class="med-stat"><div class="k">Dose</div><div class="v">500 mg</div></div>
+          <div class="med-stat"><div class="k">How often</div><div class="v">Every 4–6 hrs</div></div>
+          <div class="med-stat"><div class="k">Max / day</div><div class="v">6 doses</div></div>
+          <div class="med-stat"><div class="k">Note</div><div class="v">No alcohol</div></div>
+        </div>
+      </div>
+      <div class="med-warning"><strong>Important:</strong> Call the clinic if pain stays above 7 despite medication.</div>
+    </div>
+  </div>
+
+  <!-- FAQ modal -->
+  <div class="overlay" id="faqOverlay" role="dialog" aria-modal="true">
+    <div class="modal">
+      <button type="button" class="modal-close" data-close="faqOverlay" aria-label="Close">×</button>
+      <h2>Frequently asked questions</h2>
+      <p class="hint">Tap a question to expand.</p>
+      <div class="faq-list" id="faqList">
+        <div class="faq-item open">
+          <div class="q">When can I shower? <span>−</span></div>
+          <div class="a">Keep the incision dry until day 14. Sponge bathe only until sutures are removed.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">Is swelling normal on day 7? <span>+</span></div>
+          <div class="a">Yes — ice 20 min several times daily and elevate the leg when resting.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">When should I call the clinic? <span>+</span></div>
+          <div class="a">Fever over 101.5°F, spreading redness, sudden severe pain, or foot numbness.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">How often should I walk? <span>+</span></div>
+          <div class="a">About 5 minutes every hour while awake — log each walk in your movement tracker.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const PAIN_LEVELS = [
+    { emoji: '😄', label: 'None', desc: 'No pain at all' },
+    { emoji: '🙂', label: 'Very mild', desc: 'Barely noticeable' },
+    { emoji: '😊', label: 'Mild', desc: 'Aware of it, easy to ignore' },
+    { emoji: '😐', label: 'Uncomfortable', desc: 'Distracts you a little' },
+    { emoji: '😕', label: 'Moderate', desc: 'Noticeable but you can function' },
+    { emoji: '😟', label: 'Distracting', desc: 'Hard to ignore' },
+    { emoji: '😣', label: 'Distressing', desc: 'Dominates your senses' },
+    { emoji: '😖', label: 'Intense', desc: 'Physical activity severely limited' },
+    { emoji: '😫', label: 'Severe', desc: 'Unable to do daily activities' },
+    { emoji: '🤯', label: 'Worst possible', desc: 'As bad as it could be' },
+  ];
+
+  const HOURS = ['8a','9a','10a','11a','12p','1p','2p','3p','4p','5p','6p','7p'];
+  const DONE_HOURS = new Set([0, 1, 2, 3]);
+
+  const painSlider = document.getElementById('painSlider');
+  const painValue = document.getElementById('painValue');
+  const painLabel = document.getElementById('painLabel');
+  const painDesc = document.getElementById('painDesc');
+  const bigEmoji = document.getElementById('bigEmoji');
+  const painGrid = document.getElementById('painGrid');
+  const chatStream = document.getElementById('chatStream');
+  const hourSlots = document.getElementById('hourSlots');
+  const walkCount = document.getElementById('walkCount');
+  const walkMins = document.getElementById('walkMins');
+  const moveDue = document.getElementById('moveDue');
+
+  let minutesUntilWalk = 12;
+
+  function setPainLevel(level) {
+    const idx = level - 1;
+    const p = PAIN_LEVELS[idx];
+    painSlider.value = level;
+    painValue.textContent = level;
+    painLabel.textContent = p.label;
+    painDesc.textContent = p.desc;
+    bigEmoji.textContent = p.emoji;
+    bigEmoji.style.animation = 'none';
+    void bigEmoji.offsetWidth;
+    bigEmoji.style.animation = '';
+    painGrid.querySelectorAll('.pain-step').forEach((btn, i) => {
+      btn.classList.toggle('sel', i === idx);
+      btn.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+    });
+  }
+
+  PAIN_LEVELS.forEach((p, i) => {
+    const level = i + 1;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pain-step' + (level === 5 ? ' sel' : '');
+    btn.dataset.level = level;
+    btn.setAttribute('aria-label', `Pain level ${level}: ${p.label}`);
+    btn.setAttribute('aria-pressed', level === 5 ? 'true' : 'false');
+    btn.innerHTML = `<span class="em">${p.emoji}</span><span class="num">${level}</span>`;
+    btn.addEventListener('click', () => setPainLevel(level));
+    painGrid.appendChild(btn);
+  });
+
+  painSlider.addEventListener('input', () => setPainLevel(+painSlider.value));
+
+  HOURS.forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'hour-slot' + (DONE_HOURS.has(i) ? ' done' : '');
+    btn.innerHTML = `<span class="t">${label}</span><span class="ic">${DONE_HOURS.has(i) ? '🚶' : '·'}</span>`;
+    btn.addEventListener('click', () => {
+      const wasDone = btn.classList.contains('done');
+      btn.classList.toggle('done', !wasDone);
+      if (!wasDone) {
+        DONE_HOURS.add(i);
+        btn.querySelector('.ic').textContent = '🚶';
+      } else {
+        DONE_HOURS.delete(i);
+        btn.querySelector('.ic').textContent = '·';
+      }
+      updateWalkStats();
+    });
+    hourSlots.appendChild(btn);
+  });
+
+  function updateWalkStats() {
+    const n = DONE_HOURS.size;
+    walkCount.textContent = n;
+    walkMins.textContent = n * 5;
+  }
+
+  function logWalk(source) {
+    const now = new Date();
+    const h = now.getHours();
+    const slotIdx = Math.min(Math.max(h - 8, 0), HOURS.length - 1);
+    const slots = hourSlots.querySelectorAll('.hour-slot');
+    if (slots[slotIdx] && !slots[slotIdx].classList.contains('done')) {
+      slots[slotIdx].click();
+    } else if (!DONE_HOURS.has(slotIdx)) {
+      DONE_HOURS.add(slotIdx);
+      if (slots[slotIdx]) {
+        slots[slotIdx].classList.add('done');
+        slots[slotIdx].querySelector('.ic').textContent = '🚶';
+      }
+      updateWalkStats();
+    }
+    minutesUntilWalk = 60;
+    moveDue.textContent = '✓ Walk logged — next in ~60 min';
+    moveDue.style.color = 'var(--move)';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble system';
+    bubble.textContent = `5‑minute walk logged${source === 'banner' ? ' from reminder' : ''}. Great job — keep moving every hour.`;
+    chatStream.appendChild(bubble);
+    chatStream.scrollTop = chatStream.scrollHeight;
+  }
+
+  document.getElementById('logWalkBanner').addEventListener('click', () => logWalk('banner'));
+
+  setInterval(() => {
+    if (minutesUntilWalk > 0) {
+      minutesUntilWalk--;
+      if (minutesUntilWalk > 0) {
+        moveDue.textContent = `⏱ Next walk due in ${minutesUntilWalk} min`;
+        moveDue.style.color = '';
+      } else {
+        moveDue.textContent = '🔔 Time for a 5‑min walk now!';
+        moveDue.style.color = 'var(--accent)';
+      }
+    }
+  }, 60000);
+
+  document.getElementById('toggleActions').addEventListener('click', () => {
+    const panel = document.getElementById('actionsPanel');
+    const open = panel.classList.toggle('open');
+    document.getElementById('toggleActions').textContent = open ? '− Hide functional check' : '＋ What can you do right now?';
+  });
+
+  document.querySelectorAll('.action-chips').forEach(group => {
+    group.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        group.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+        chip.classList.add('sel');
+      });
+    });
+  });
+
+  document.getElementById('savePain').addEventListener('click', () => {
+    const level = painSlider.value;
+    const p = PAIN_LEVELS[level - 1];
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble system';
+    bubble.textContent = `Pain check-in saved: ${level}/10 (${p.label}) ${p.emoji}. Your care team can see this.`;
+    chatStream.appendChild(bubble);
+    chatStream.scrollTop = chatStream.scrollHeight;
+  });
+
+  const medsOverlay = document.getElementById('medsOverlay');
+  const faqOverlay = document.getElementById('faqOverlay');
+
+  function openOverlay(el) { el.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeOverlay(el) { el.classList.remove('open'); document.body.style.overflow = ''; }
+
+  document.getElementById('openMeds').addEventListener('click', () => openOverlay(medsOverlay));
+  document.getElementById('openFaq').addEventListener('click', () => openOverlay(faqOverlay));
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeOverlay(document.getElementById(btn.dataset.close)));
+  });
+  [medsOverlay, faqOverlay].forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) closeOverlay(o); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') [medsOverlay, faqOverlay].forEach(o => { if (o.classList.contains('open')) closeOverlay(o); });
+  });
+
+  document.querySelectorAll('.faq-preview .faq-q').forEach((q, i) => {
+    q.addEventListener('click', () => {
+      openOverlay(faqOverlay);
+      document.querySelectorAll('#faqList .faq-item').forEach((item, j) => {
+        item.classList.toggle('open', j === i);
+        item.querySelector('.q span').textContent = j === i ? '−' : '+';
+      });
+    });
+  });
+  document.querySelectorAll('#faqList .faq-item .q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('#faqList .faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.q span').textContent = '+';
+      });
+      if (!wasOpen) { item.classList.add('open'); q.querySelector('span').textContent = '−'; }
+    });
+  });
+
+  function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const userBubble = document.createElement('div');
+    userBubble.className = 'bubble user';
+    userBubble.textContent = text;
+    chatStream.appendChild(userBubble);
+    input.value = '';
+    chatStream.scrollTop = chatStream.scrollHeight;
+    setTimeout(() => {
+      const botBubble = document.createElement('div');
+      botBubble.className = 'bubble bot';
+      botBubble.innerHTML = 'Thanks — noted. Log pain on the right, and try a 5‑min walk if you\'re due.<small>PostUp+ · just now</small>';
+      chatStream.appendChild(botBubble);
+      chatStream.scrollTop = chatStream.scrollHeight;
+    }, 700);
+  }
+  document.getElementById('sendBtn').addEventListener('click', sendMessage);
+  document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+</script>
+</body>
+</html>

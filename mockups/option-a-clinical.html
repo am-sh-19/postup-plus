@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PostUp+ — Option A: Clinical (EHR-style)</title>
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --panel: #ffffff;
+    --border: #d6dce3;
+    --border-strong: #b8c1cc;
+    --text: #14223b;
+    --muted: #5a6878;
+    --accent: #0b66c2;
+    --accent-soft: #e6f0fa;
+    --good: #1f7a3a;
+    --warn: #b15212;
+    --bad: #b3261e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font: 13px/1.45 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--accent); text-decoration: none; }
+
+  .topbar { background: #0a2540; color: #fff; padding: 8px 16px;
+    display: flex; align-items: center; gap: 16px; border-bottom: 3px solid var(--accent); }
+  .topbar .logo { font-weight: 700; letter-spacing: 0.2px; }
+  .topbar .crumbs { color: #b8c8da; font-size: 12px; }
+  .topbar .user { margin-left: auto; font-size: 12px; color: #b8c8da; }
+
+  .chartbar { background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: grid;
+    grid-template-columns: 1fr auto auto auto auto; gap: 24px; align-items: center; }
+  .chartbar .name { font-size: 16px; font-weight: 600; }
+  .chartbar .meta { color: var(--muted); font-size: 12px; }
+  .chartbar .tag { background: var(--accent-soft); color: var(--accent);
+    padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+  .chartbar .field { display: flex; flex-direction: column; }
+  .chartbar .field label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .chartbar .field span { font-size: 13px; font-weight: 500; }
+
+  .layout { display: grid; grid-template-columns: 280px 1fr 320px; gap: 1px;
+    background: var(--border); min-height: calc(100vh - 96px); }
+  .pane { background: var(--panel); padding: 14px 16px; overflow: auto; }
+  .pane h3 { margin: 0 0 10px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.6px; color: var(--muted); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+
+  /* Left: chat */
+  .chat-msg { margin: 8px 0; padding: 8px 10px; border-radius: 3px; font-size: 12.5px; }
+  .chat-msg.bot { background: #f1f5f9; border-left: 3px solid var(--accent); }
+  .chat-msg.user { background: var(--accent-soft); border-left: 3px solid #0a2540; text-align: right; }
+  .chat-msg .who { font-size: 10px; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; }
+  .chat-input { display: flex; gap: 6px; margin-top: 12px; }
+  .chat-input input { flex: 1; padding: 7px 10px; border: 1px solid var(--border-strong);
+    border-radius: 3px; font-size: 12.5px; font-family: inherit; }
+  .chat-input button { background: var(--accent); color: #fff; border: 0; padding: 7px 12px;
+    border-radius: 3px; font-weight: 600; cursor: pointer; }
+
+  /* Center: pain capture */
+  .center-head { display: flex; justify-content: space-between; align-items: center; }
+  .center-head h2 { margin: 0; font-size: 18px; font-weight: 600; }
+  .center-head .sub { color: var(--muted); font-size: 12px; }
+
+  .vas-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 14px 0 6px; }
+  .vas-face { background: var(--panel); border: 1px solid var(--border-strong); border-radius: 4px;
+    padding: 14px 6px; text-align: center; cursor: pointer; transition: border-color .12s; }
+  .vas-face.sel { border-color: var(--accent); border-width: 2px; background: var(--accent-soft); }
+  .vas-face .emoji { font-size: 32px; line-height: 1; }
+  .vas-face .num { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  .vas-face .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+  .vas-scale-bar { height: 5px; background: linear-gradient(90deg, #1f7a3a, #d4a017, #b3261e);
+    border-radius: 3px; margin: 4px 0 18px; }
+
+  .actions { border: 1px solid var(--border); border-radius: 4px; }
+  .actions h4 { margin: 0; padding: 10px 12px; font-size: 12px; font-weight: 600;
+    background: #fafbfc; border-bottom: 1px solid var(--border); }
+  .actions ul { list-style: none; margin: 0; padding: 0; }
+  .actions li { display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+    border-bottom: 1px solid var(--border); font-size: 13px; }
+  .actions li:last-child { border-bottom: 0; }
+  .actions .pill { margin-left: auto; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; }
+  .pill.ok { background: #e3f3e8; color: var(--good); }
+  .pill.partial { background: #fdf0d8; color: var(--warn); }
+  .pill.no { background: #fbe0de; color: var(--bad); }
+
+  .submit-row { margin-top: 14px; display: flex; gap: 8px; justify-content: flex-end; }
+  .btn { padding: 8px 14px; border: 1px solid var(--border-strong); background: #fff;
+    border-radius: 3px; font-size: 12.5px; cursor: pointer; font-weight: 500; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* Right: chart + meds */
+  .stat { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12.5px; }
+  .stat .v { font-weight: 600; }
+  .spark { height: 60px; background: #f8fafc; border: 1px solid var(--border); border-radius: 3px;
+    margin: 8px 0 14px; position: relative; padding: 6px; }
+  .spark svg { width: 100%; height: 100%; display: block; }
+  .meds li { font-size: 12.5px; padding: 6px 0; border-bottom: 1px dotted var(--border); list-style: none; }
+  .meds li:last-child { border-bottom: 0; }
+  .meds .when { color: var(--muted); font-size: 11px; }
+
+  .lang-toggle { position: fixed; top: 8px; right: 16px; font-size: 11px; color: #b8c8da; }
+  .lang-toggle .sel { color: #fff; font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="logo">PostUp+</span>
+    <span class="crumbs">Patients › Emily Person › Post-Op Day 7</span>
+    <span class="user">Dr. R. Shah · Patient view</span>
+    <span class="lang-toggle"><span class="sel">EN</span> · ES</span>
+  </div>
+
+  <div class="chartbar">
+    <div class="field"><label>Patient</label><span class="name">Emily Person <span class="tag">POST-OP D7</span></span><span class="meta">F · 64 · DOB 1961-03-12 · MRN 00471829</span></div>
+    <div class="field"><label>Procedure</label><span>Right Total Knee Arthroplasty</span></div>
+    <div class="field"><label>Surgery date</label><span>2026-05-09</span></div>
+    <div class="field"><label>Surgeon</label><span>Dr. M. van der Berg</span></div>
+    <div class="field"><label>Allergies</label><span>NKDA</span></div>
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT: chat -->
+    <div class="pane">
+      <h3>Ask your care team</h3>
+      <div class="chat-msg bot"><div class="who">PostUp+</div>Good morning, Emily. How's the knee feeling today?</div>
+      <div class="chat-msg user"><div class="who">You · 8:42 AM</div>It's swollen and hurts when I stand up</div>
+      <div class="chat-msg bot"><div class="who">PostUp+</div>That's common on day 7. Are you keeping it elevated when sitting? Try 20 min ice every 2 hours. I'll flag this to your care team.</div>
+      <div class="chat-msg user"><div class="who">You · 8:43 AM</div>When can I shower?</div>
+      <div class="chat-msg bot"><div class="who">PostUp+</div>Per your discharge note, sutures removed at day 14. Sponge bathing only until then, keep the incision dry.</div>
+      <div class="chat-input">
+        <input placeholder="Type a question…" />
+        <button>Send</button>
+      </div>
+    </div>
+
+    <!-- CENTER: pain capture -->
+    <div class="pane">
+      <div class="center-head">
+        <div><h2>Record your pain</h2><div class="sub">Visual Analog Scale (0-100) · Day 7 check-in</div></div>
+        <div class="sub">10:14 AM, May 16</div>
+      </div>
+
+      <div class="vas-row">
+        <div class="vas-face"><div class="emoji">😀</div><div class="num">0</div><div class="lbl">None</div></div>
+        <div class="vas-face"><div class="emoji">🙂</div><div class="num">25</div><div class="lbl">Mild</div></div>
+        <div class="vas-face sel"><div class="emoji">😐</div><div class="num">50</div><div class="lbl">Moderate</div></div>
+        <div class="vas-face"><div class="emoji">😣</div><div class="num">75</div><div class="lbl">Severe</div></div>
+        <div class="vas-face"><div class="emoji">😖</div><div class="num">100</div><div class="lbl">Worst</div></div>
+      </div>
+      <div class="vas-scale-bar"></div>
+
+      <div class="actions">
+        <h4>What can you do without pain?</h4>
+        <ul>
+          <li>Walk across the room <span class="pill partial">With help</span></li>
+          <li>Sit for 10 minutes <span class="pill ok">Yes</span></li>
+          <li>Stand from a chair <span class="pill partial">With help</span></li>
+          <li>Climb a single stair <span class="pill no">No</span></li>
+          <li>Sleep through the night <span class="pill no">No</span></li>
+        </ul>
+      </div>
+
+      <div class="submit-row">
+        <button class="btn">Save draft</button>
+        <button class="btn primary">Submit check-in</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: trend + meds -->
+    <div class="pane">
+      <h3>Pain trend · last 7 days</h3>
+      <div class="spark">
+        <svg viewBox="0 0 280 60" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#0b66c2" stroke-width="2"
+            points="0,8 40,12 80,20 120,28 160,30 200,38 240,42 280,30" />
+          <circle cx="280" cy="30" r="3" fill="#0b66c2" />
+        </svg>
+      </div>
+      <div class="stat"><span>Average pain (7d)</span><span class="v">62</span></div>
+      <div class="stat"><span>Latest</span><span class="v">50</span></div>
+      <div class="stat"><span>Trend</span><span class="v" style="color: var(--good)">↓ improving</span></div>
+
+      <h3 style="margin-top: 18px;">Active medications</h3>
+      <ul class="meds">
+        <li>Oxycodone 5 mg<div class="when">PRN q4-6h · last dose 06:30</div></li>
+        <li>Acetaminophen 1000 mg<div class="when">q6h scheduled · next 12:00</div></li>
+        <li>Aspirin 81 mg<div class="when">Daily · DVT prophylaxis</div></li>
+        <li>Docusate 100 mg<div class="when">BID</div></li>
+      </ul>
+
+      <h3 style="margin-top: 18px;">Care team alerts</h3>
+      <div style="background: #fff8e1; border-left: 3px solid var(--warn); padding: 8px 10px; font-size: 12.5px;">
+        Pain &gt;70 reported 2× in last 24h. PT consult flagged for review.
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

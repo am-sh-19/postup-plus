@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PostUp+ — Option C: Bento (Modern dark)</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --panel: #131825;
+    --panel-2: #1a2030;
+    --border: #232a3d;
+    --text: #e8ecf3;
+    --muted: #7c869c;
+    --accent: #5cf0c8;
+    --accent-2: #8b5cf6;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 "Inter", -apple-system, system-ui, sans-serif;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(92, 240, 200, 0.08), transparent),
+      radial-gradient(ellipse 80% 50% at 80% 0%, rgba(139, 92, 246, 0.08), transparent);
+  }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 24px 28px 60px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 10px var(--accent); }
+  .brand .plus { color: var(--accent); }
+
+  .controls { display: flex; gap: 10px; align-items: center; }
+  .lang { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 4px; font-size: 12px; }
+  .lang span { padding: 5px 10px; border-radius: 6px; color: var(--muted); cursor: pointer; }
+  .lang span.sel { background: var(--accent); color: #0a0e17; font-weight: 600; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #0a0e17; }
+
+  .patient-strip { background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 18px; display: flex; align-items: center; gap: 24px; margin-bottom: 16px; }
+  .patient-strip .pname { font-size: 16px; font-weight: 600; }
+  .patient-strip .meta { color: var(--muted); font-size: 12px; }
+  .patient-strip .badge { background: rgba(92,240,200,0.1); color: var(--accent); padding: 4px 10px;
+    border-radius: 999px; font-size: 11px; font-weight: 600; border: 1px solid rgba(92,240,200,0.2); }
+  .patient-strip .spacer { flex: 1; }
+  .patient-strip .kv { display: flex; flex-direction: column; }
+  .patient-strip .kv small { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Bento grid */
+  .bento { display: grid; gap: 16px;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "pain pain pain pain trend trend"
+      "pain pain pain pain action action"
+      "chat chat chat chat action action"; }
+  .b { background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px; position: relative; overflow: hidden; }
+  .b::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); }
+  .b h3 { margin: 0 0 4px; font-size: 12px; font-weight: 500; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.6px; }
+  .b-pain { grid-area: pain; }
+  .b-trend { grid-area: trend; }
+  .b-action { grid-area: action; }
+  .b-chat { grid-area: chat; }
+
+  /* Pain bento */
+  .pain-main { display: flex; align-items: center; gap: 28px; margin-top: 14px; }
+  .pain-dial { width: 180px; height: 180px; position: relative; flex-shrink: 0; }
+  .pain-dial svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .pain-dial .center { position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; }
+  .pain-dial .num { font-size: 56px; font-weight: 700; letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text;
+    background-clip: text; color: transparent; }
+  .pain-dial .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .pain-faces { flex: 1; }
+  .pain-faces .row { display: flex; gap: 8px; }
+  .pain-faces .f { flex: 1; aspect-ratio: 1; background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .15s; }
+  .pain-faces .f:hover { border-color: var(--muted); }
+  .pain-faces .f.sel { border-color: var(--accent); background: rgba(92,240,200,0.08); box-shadow: 0 0 24px rgba(92,240,200,0.15); }
+  .pain-faces .f .em { font-size: 28px; line-height: 1; }
+  .pain-faces .f .n { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .pain-cta { display: flex; gap: 10px; margin-top: 18px; }
+  .pain-cta button { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--panel-2); color: var(--text); font-size: 13px; cursor: pointer; font-family: inherit; }
+  .pain-cta button.primary { background: var(--accent); color: #0a0e17; border-color: var(--accent); font-weight: 600; }
+
+  /* Trend bento */
+  .trend-num { display: flex; align-items: baseline; gap: 8px; margin-top: 8px; }
+  .trend-num .big { font-size: 32px; font-weight: 700; letter-spacing: -1px; }
+  .trend-num .delta { color: var(--accent); font-size: 13px; font-weight: 600; }
+  .trend-svg { width: 100%; height: 60px; margin-top: 10px; }
+
+  /* Action bento */
+  .actions { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 10px; }
+  .a .ic { font-size: 18px; }
+  .a .l { flex: 1; font-size: 13px; }
+  .a .v { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .a .v.ok { background: rgba(92,240,200,0.15); color: var(--accent); }
+  .a .v.partial { background: rgba(245,158,11,0.15); color: var(--warn); }
+  .a .v.no { background: rgba(239,68,68,0.15); color: var(--bad); }
+
+  /* Chat bento */
+  .chat-stream { display: flex; flex-direction: column; gap: 10px; margin-top: 12px;
+    max-height: 220px; overflow: auto; }
+  .msg { padding: 10px 14px; border-radius: 12px; font-size: 13px; max-width: 80%; }
+  .msg.bot { background: var(--panel-2); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.user { background: linear-gradient(135deg, var(--accent-2), #6d28d9); align-self: flex-end;
+    border-bottom-right-radius: 4px; color: #fff; }
+  .compose { display: flex; gap: 8px; margin-top: 12px; }
+  .compose input { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--panel-2); color: var(--text); font-size: 13px; font-family: inherit; }
+  .compose input::placeholder { color: var(--muted); }
+  .compose button { padding: 10px 16px; border-radius: 10px; border: 0; background: var(--accent);
+    color: #0a0e17; font-weight: 600; cursor: pointer; font-family: inherit; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><span class="dot"></span>PostUp<span class="plus">+</span></div>
+      <div class="controls">
+        <div class="lang"><span class="sel">EN</span><span>ES</span></div>
+        <div class="avatar">EP</div>
+      </div>
+    </div>
+
+    <div class="patient-strip">
+      <div>
+        <div class="pname">Emily Person <span class="badge">DAY 7 · POST-OP</span></div>
+        <div class="meta">F · 64 · MRN 00471829</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="kv"><small>Procedure</small><span>R Total Knee Arthroplasty</span></div>
+      <div class="kv"><small>Surgery</small><span>2026-05-09</span></div>
+      <div class="kv"><small>Surgeon</small><span>Dr. van der Berg</span></div>
+    </div>
+
+    <div class="bento">
+
+      <!-- Pain (large) -->
+      <div class="b b-pain">
+        <h3>Pain right now</h3>
+        <div class="pain-main">
+          <div class="pain-dial">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" stroke="#232a3d" stroke-width="8" fill="none" />
+              <circle cx="50" cy="50" r="42" stroke="url(#g)" stroke-width="8" fill="none"
+                stroke-dasharray="263.9" stroke-dashoffset="132" stroke-linecap="round" />
+              <defs>
+                <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#5cf0c8" />
+                  <stop offset="100%" stop-color="#8b5cf6" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="center"><div class="num">50</div><div class="lbl">/ 100</div></div>
+          </div>
+          <div class="pain-faces">
+            <div class="row">
+              <div class="f"><div class="em">😀</div><div class="n">0</div></div>
+              <div class="f"><div class="em">🙂</div><div class="n">25</div></div>
+              <div class="f sel"><div class="em">😐</div><div class="n">50</div></div>
+              <div class="f"><div class="em">😣</div><div class="n">75</div></div>
+              <div class="f"><div class="em">😖</div><div class="n">100</div></div>
+            </div>
+            <div class="pain-cta">
+              <button>Add a note</button>
+              <button class="primary">Submit check-in</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trend (small) -->
+      <div class="b b-trend">
+        <h3>7-day trend</h3>
+        <div class="trend-num"><span class="big">62</span><span class="delta">↓ 12</span></div>
+        <svg class="trend-svg" viewBox="0 0 200 60" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5cf0c8" stop-opacity="0.3" />
+              <stop offset="100%" stop-color="#5cf0c8" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <polyline fill="url(#ga)" stroke="none"
+            points="0,15 30,20 60,28 90,32 120,38 150,42 180,46 200,38 200,60 0,60" />
+          <polyline fill="none" stroke="#5cf0c8" stroke-width="2"
+            points="0,15 30,20 60,28 90,32 120,38 150,42 180,46 200,38" />
+          <circle cx="200" cy="38" r="3" fill="#5cf0c8" />
+        </svg>
+      </div>
+
+      <!-- Actions (right column, tall) -->
+      <div class="b b-action">
+        <h3>Functional capacity</h3>
+        <div class="actions">
+          <div class="a"><span class="ic">🚶</span><span class="l">Walk across the room</span><span class="v partial">Help</span></div>
+          <div class="a"><span class="ic">🪑</span><span class="l">Sit for 10 minutes</span><span class="v ok">Yes</span></div>
+          <div class="a"><span class="ic">🧍</span><span class="l">Stand from chair</span><span class="v partial">Help</span></div>
+          <div class="a"><span class="ic">🪜</span><span class="l">Climb one stair</span><span class="v no">No</span></div>
+          <div class="a"><span class="ic">🛏️</span><span class="l">Sleep through night</span><span class="v no">No</span></div>
+        </div>
+      </div>
+
+      <!-- Chat (bottom wide) -->
+      <div class="b b-chat">
+        <h3>Care assistant</h3>
+        <div class="chat-stream">
+          <div class="msg bot">Good morning, Emily. How's the knee feeling today?</div>
+          <div class="msg user">Swollen and it hurts when I stand</div>
+          <div class="msg bot">That's normal on day 7. Try 20 min of ice every 2 hours and keep it elevated. I've flagged this for your care team.</div>
+          <div class="msg user">When can I shower?</div>
+          <div class="msg bot">Sutures come out at day 14. Until then, sponge bathing only — keep the incision dry.</div>
+        </div>
+        <div class="compose">
+          <input placeholder="Ask anything about your recovery…" />
+          <button>Send</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

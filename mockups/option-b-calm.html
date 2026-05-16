@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PostUp+ — Option B: Calm (Wellness-style)</title>
+<style>
+  :root {
+    --bg: #fdf6ec;
+    --bg-2: #f7ecd9;
+    --panel: #ffffff;
+    --text: #2d2620;
+    --muted: #7d705f;
+    --accent: #e07a3c;
+    --accent-2: #6b9080;
+    --soft: #fff3e0;
+    --rounded: 22px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.55 ui-rounded, "SF Pro Rounded", "Avenir Next", system-ui, sans-serif; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 28px 60px; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .brand { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .brand .plus { color: var(--accent); }
+  .lang { background: var(--panel); border-radius: 999px; padding: 6px 8px; font-size: 13px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .lang span { padding: 4px 10px; border-radius: 999px; color: var(--muted); cursor: pointer; }
+  .lang span.sel { background: var(--accent); color: #fff; font-weight: 600; }
+
+  .greeting { font-size: 30px; font-weight: 600; margin: 4px 0 4px; letter-spacing: -0.4px; }
+  .greeting .name { color: var(--accent); }
+  .sub { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+
+  .grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+
+  .card { background: var(--panel); border-radius: var(--rounded); padding: 28px;
+    box-shadow: 0 1px 3px rgba(50, 40, 30, 0.06), 0 8px 24px rgba(50, 40, 30, 0.04); }
+  .card h2 { margin: 0 0 6px; font-size: 20px; font-weight: 600; }
+  .card .hint { color: var(--muted); font-size: 14px; margin-bottom: 22px; }
+
+  /* Pain capture card */
+  .faces { display: flex; justify-content: space-between; align-items: end;
+    gap: 8px; margin: 18px 0 14px; }
+  .face { flex: 1; text-align: center; cursor: pointer; padding: 18px 4px;
+    border-radius: 18px; transition: all .15s ease; }
+  .face:hover { background: var(--soft); }
+  .face.sel { background: var(--soft); transform: scale(1.05); }
+  .face .em { font-size: 52px; line-height: 1; }
+  .face.sel .em { font-size: 64px; }
+  .face .lbl { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .face.sel .lbl { color: var(--accent); font-weight: 600; }
+
+  .scale-track { height: 10px; background: linear-gradient(90deg, #c9e4d0, #f6dba6, #f0b59a);
+    border-radius: 999px; position: relative; margin: 8px 0 26px; }
+  .scale-track::after { content: ""; position: absolute; left: 50%; top: -4px;
+    width: 18px; height: 18px; background: var(--accent); border-radius: 50%;
+    transform: translateX(-50%); box-shadow: 0 2px 6px rgba(224,122,60,0.4); }
+
+  .actions { margin-top: 8px; }
+  .actions h3 { font-size: 15px; font-weight: 600; margin: 18px 0 12px; }
+  .action-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+    background: var(--bg); border-radius: 16px; margin-bottom: 10px; }
+  .action-row .ic { font-size: 24px; }
+  .action-row .label { flex: 1; font-size: 15px; }
+  .action-chips { display: flex; gap: 6px; }
+  .chip { padding: 4px 12px; border-radius: 999px; font-size: 12px; cursor: pointer;
+    background: #fff; color: var(--muted); border: 1px solid transparent; }
+  .chip.sel { background: var(--accent-2); color: #fff; font-weight: 600; }
+  .chip.no.sel { background: #b86a52; }
+  .chip.partial.sel { background: var(--accent); }
+
+  .save { width: 100%; margin-top: 20px; padding: 16px; background: var(--accent); color: #fff;
+    border: 0; border-radius: 16px; font-size: 16px; font-weight: 600; cursor: pointer;
+    font-family: inherit; box-shadow: 0 4px 14px rgba(224,122,60,0.25); }
+
+  /* Chat card */
+  .chat-stream { display: flex; flex-direction: column; gap: 12px; max-height: 380px; overflow: auto; padding-right: 4px; }
+  .bubble { padding: 12px 16px; border-radius: 18px; max-width: 86%; font-size: 14px; line-height: 1.5; }
+  .bubble.bot { background: var(--soft); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .bubble.user { background: var(--accent-2); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .bubble.bot small { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
+
+  .compose { display: flex; gap: 8px; margin-top: 16px; }
+  .compose input { flex: 1; padding: 14px 18px; border-radius: 999px; border: 1px solid #ead8be;
+    background: #fff; font-size: 14px; font-family: inherit; }
+  .compose button { padding: 14px 22px; border-radius: 999px; background: var(--accent-2); color: #fff;
+    border: 0; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+  /* Trend strip */
+  .trend { display: flex; align-items: center; gap: 14px; padding: 18px 24px;
+    background: linear-gradient(135deg, #fff 0%, var(--soft) 100%);
+    border-radius: var(--rounded); margin-top: 24px; }
+  .trend .icon { font-size: 32px; }
+  .trend .copy { flex: 1; }
+  .trend .copy h4 { margin: 0; font-size: 15px; font-weight: 600; }
+  .trend .copy p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+  .trend svg { width: 140px; height: 44px; }
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="brand">PostUp<span class="plus">+</span></div>
+      <div class="lang"><span class="sel">English</span><span>Español</span></div>
+    </div>
+
+    <div class="greeting">Good morning, <span class="name">Emily</span>.</div>
+    <div class="sub">You're 7 days post-surgery. Here's your check-in for today.</div>
+
+    <div class="grid">
+
+      <!-- LEFT: pain -->
+      <div class="card">
+        <h2>How are you feeling?</h2>
+        <div class="hint">Tap the face that matches your pain right now.</div>
+
+        <div class="faces">
+          <div class="face"><div class="em">😀</div><div class="lbl">None</div></div>
+          <div class="face"><div class="em">🙂</div><div class="lbl">A little</div></div>
+          <div class="face sel"><div class="em">😐</div><div class="lbl">Moderate</div></div>
+          <div class="face"><div class="em">😣</div><div class="lbl">A lot</div></div>
+          <div class="face"><div class="em">😖</div><div class="lbl">Worst ever</div></div>
+        </div>
+        <div class="scale-track"></div>
+
+        <div class="actions">
+          <h3>What can you do right now?</h3>
+          <div class="action-row">
+            <div class="ic">🚶</div>
+            <div class="label">Walk across the room</div>
+            <div class="action-chips">
+              <span class="chip">Yes</span>
+              <span class="chip partial sel">With help</span>
+              <span class="chip no">No</span>
+            </div>
+          </div>
+          <div class="action-row">
+            <div class="ic">🪑</div>
+            <div class="label">Sit for 10 minutes</div>
+            <div class="action-chips">
+              <span class="chip sel">Yes</span>
+              <span class="chip partial">With help</span>
+              <span class="chip no">No</span>
+            </div>
+          </div>
+          <div class="action-row">
+            <div class="ic">🪜</div>
+            <div class="label">Climb one stair</div>
+            <div class="action-chips">
+              <span class="chip">Yes</span>
+              <span class="chip partial">With help</span>
+              <span class="chip no sel">No</span>
+            </div>
+          </div>
+          <div class="action-row">
+            <div class="ic">🛏️</div>
+            <div class="label">Sleep through the night</div>
+            <div class="action-chips">
+              <span class="chip">Yes</span>
+              <span class="chip partial">With help</span>
+              <span class="chip no sel">No</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="save">Save my check-in</button>
+      </div>
+
+      <!-- RIGHT: chat -->
+      <div class="card">
+        <h2>Talk to your care team</h2>
+        <div class="hint">Ask anything. Your team sees your messages.</div>
+        <div class="chat-stream">
+          <div class="bubble bot">Hi Emily, I'm here to help. How's the knee feeling today?</div>
+          <div class="bubble user">It's swollen and hurts when I stand up</div>
+          <div class="bubble bot">That's common on day 7. Try ice for 20 minutes and keep the knee elevated when sitting. I'll let your care team know.<small>PostUp+ · 8:42 AM</small></div>
+          <div class="bubble user">When can I shower?</div>
+          <div class="bubble bot">Your discharge note says sutures come out on day 14. Until then, sponge bathing only — keep the incision dry.<small>PostUp+ · 8:43 AM</small></div>
+        </div>
+        <div class="compose">
+          <input placeholder="Ask a question…" />
+          <button>Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="trend">
+      <div class="icon">📈</div>
+      <div class="copy">
+        <h4>You're improving</h4>
+        <p>Your pain has trended down over the last 4 days. Keep going.</p>
+      </div>
+      <svg viewBox="0 0 140 44" preserveAspectRatio="none">
+        <polyline fill="none" stroke="#6b9080" stroke-width="2.5" stroke-linecap="round"
+          points="2,8 22,12 42,18 62,24 82,28 102,32 122,34 138,28" />
+        <circle cx="138" cy="28" r="4" fill="#e07a3c" />
+      </svg>
+    </div>
+  </div>
+</body>
+</html>
