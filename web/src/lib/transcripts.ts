@@ -7,8 +7,11 @@ import type { PatientId, PatientTranscript, TranscriptTurn } from "./types";
 // Pain Summary tab can summarize them. No seed data — file is empty until
 // the patient actually chats.
 
-const ROOT = process.cwd();
-const DATA_DIR = path.join(ROOT, ".data", "transcripts");
+// On Vercel the function filesystem is read-only outside /tmp, so we anchor
+// in /tmp. Locally this also works fine. Data is ephemeral — fine for the
+// demo, where a single session's chat just needs to round-trip to the
+// provider's Pain Summary tab.
+const DATA_DIR = path.join("/tmp", "postup-plus", "transcripts");
 
 function fileFor(patientId: PatientId): string {
   return path.join(DATA_DIR, `${patientId}.json`);

@@ -8,8 +8,9 @@ import type { PainEntry, PatientId } from "./types";
 // actually reporting. The hardcoded chart history in `patient-charts.json`
 // stays untouched; these entries are merged on read.
 
-const ROOT = process.cwd();
-const DATA_DIR = path.join(ROOT, ".data", "pain-log");
+// Same /tmp anchoring as transcripts.ts — Vercel's function FS is read-only
+// outside /tmp. Demo state, intentionally ephemeral.
+const DATA_DIR = path.join("/tmp", "postup-plus", "pain-log");
 
 function fileFor(patientId: PatientId): string {
   return path.join(DATA_DIR, `${patientId}.json`);
