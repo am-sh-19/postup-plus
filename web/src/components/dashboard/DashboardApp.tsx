@@ -100,15 +100,16 @@ export function DashboardApp() {
         <p className="text-xs text-postup-muted m-0 mt-0.5">{patient.procedure}</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-5 lg:grid-rows-1 gap-4 flex-1 min-h-0 lg:h-full lg:min-h-0">
         <ChatPane
+          key={`${patient.id}-${locale}`}
           patient={patient}
           locale={locale}
           externalMessages={systemMessages}
-          className="lg:col-span-3 min-h-[420px] lg:min-h-0"
+          className="lg:col-span-3 min-h-[min(420px,55vh)] lg:min-h-0 lg:h-full lg:max-h-full"
         />
 
-        <aside className="lg:col-span-2 flex flex-col gap-3 min-h-0 overflow-y-auto pb-1">
+        <aside className="lg:col-span-2 flex flex-col gap-3 min-h-0 lg:h-full lg:max-h-full lg:scroll-region pb-1">
           <MovementBanner
             locale={locale}
             minutesUntilWalk={minutesUntilWalk}

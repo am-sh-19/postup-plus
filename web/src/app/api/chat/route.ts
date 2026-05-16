@@ -1,5 +1,13 @@
 import { anthropic } from "@ai-sdk/anthropic";
-import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import {
+  convertToModelMessages,
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+  generateId,
+  streamText,
+  type UIMessage,
+} from "ai";
+import { generateMockReply } from "@/lib/chat-mock";
 import { PATIENTS } from "@/lib/patients";
 import type { Locale, Patient, PatientId } from "@/lib/types";
 
@@ -35,6 +43,32 @@ function buildSystemPrompt(patient: Patient, locale: Locale): string {
   ].join("\n");
 }
 
+function conversationOnly(messages: UIMessage[]): UIMessage[] {
+  return messages.filter((m) => m.role === "user" || m.role === "assistant");
+}
+
+function mockStreamResponse(
+  text: string,
+  originalMessages: UIMessage[],
+): Response {
+  const stream = createUIMessageStream({
+    originalMessages,
+    execute: ({ writer }) => {
+      const id = generateId();
+      writer.write({ type: "text-start", id });
+
+      const words = text.split(/(\s+)/);
+      for (const chunk of words) {
+        if (chunk) writer.write({ type: "text-delta", id, delta: chunk });
+      }
+
+      writer.write({ type: "text-end", id });
+    },
+  });
+
+  return createUIMessageStreamResponse({ stream });
+}
+
 export async function POST(req: Request) {
   const {
     messages,
@@ -48,12 +82,25 @@ export async function POST(req: Request) {
 
   const patient = PATIENTS[patientId ?? "emily"];
   const lang: Locale = locale ?? "en";
+  const chatMessages = conversationOnly(messages ?? []);
 
-  const result = streamText({
-    model: anthropic("claude-sonnet-4-6"),
-    system: buildSystemPrompt(patient, lang),
-    messages: await convertToModelMessages(messages),
-  });
+  const useMock = !process.env.ANTHROPIC_API_KEY;
 
-  return result.toUIMessageStreamResponse();
+  if (useMock) {
+    const reply = generateMockReply(patient, lang, chatMessages);
+    return mockStreamResponse(reply, messages);
+  }
+
+  try {
+    const result = streamText({
+      model: anthropic("claude-sonnet-4-6"),
+      system: buildSystemPrompt(patient, lang),
+      messages: await convertToModelMessages(chatMessages),
+    });
+
+    return result.toUIMessageStreamResponse({ originalMessages: messages });
+  } catch {
+    const reply = generateMockReply(patient, lang, chatMessages);
+    return mockStreamResponse(reply, messages);
+  }
 }

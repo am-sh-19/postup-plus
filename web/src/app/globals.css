@@ -514,6 +514,13 @@ body {
   padding: 1px 5px;
 }
 
+/* Scrollable regions in fixed-height patient / provider layouts */
+.scroll-region {
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .role-pill__thumb,
   .login-input,

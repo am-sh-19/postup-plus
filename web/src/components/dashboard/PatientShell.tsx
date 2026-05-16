@@ -24,7 +24,7 @@ export function PatientShell({
   }
 
   return (
-    <div className="min-h-screen max-h-dvh flex flex-col bg-[var(--postup-bg)]">
+    <div className="h-dvh flex flex-col overflow-hidden bg-[var(--postup-bg)]">
       <header className="shrink-0 flex items-center justify-between px-5 py-3 border-b border-[var(--postup-border)] bg-white">
         <div className="flex items-center gap-3 min-w-0">
           <LogoHomeLink height={34} />
@@ -69,8 +69,8 @@ export function PatientShell({
         </div>
       </header>
 
-      <main className="flex-1 min-h-0 overflow-hidden p-4 md:p-6">
-        <div className="max-w-6xl mx-auto h-full flex flex-col min-h-0">
+      <main className="flex-1 min-h-0 max-lg:scroll-region lg:overflow-hidden p-4 md:p-6 pb-6">
+        <div className="max-w-6xl mx-auto h-full min-h-0 flex flex-col lg:min-h-full">
           {children}
         </div>
       </main>

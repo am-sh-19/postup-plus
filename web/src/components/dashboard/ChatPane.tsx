@@ -36,9 +36,13 @@ function seedMessages(patient: Patient, locale: Locale): UIMessage[] {
 }
 
 function messageText(msg: UIMessage): string {
-  return msg.parts
-    .map((part) => (part.type === "text" ? part.text : ""))
-    .join("");
+  if (msg.parts?.length) {
+    return msg.parts
+      .map((part) => (part.type === "text" ? part.text : ""))
+      .join("");
+  }
+  const legacy = (msg as UIMessage & { content?: string }).content;
+  return typeof legacy === "string" ? legacy : "";
 }
 
 export function ChatPane({
@@ -48,7 +52,19 @@ export function ChatPane({
   className = "",
 }: ChatPaneProps) {
   const transport = useMemo(
-    () => new DefaultChatTransport({ api: "/api/chat" }),
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        prepareSendMessagesRequest: ({ messages, body, ...rest }) => ({
+          ...rest,
+          body: {
+            ...body,
+            messages: messages.filter(
+              (m) => m.role === "user" || m.role === "assistant",
+            ),
+          },
+        }),
+      }),
     [],
   );
 
@@ -57,37 +73,31 @@ export function ChatPane({
     [patient, locale],
   );
 
-  const { messages, setMessages, sendMessage, status, stop, error } = useChat({
+  const { messages, sendMessage, status, stop, error } = useChat({
     transport,
     messages: initial,
   });
 
   const [input, setInput] = useState("");
   const streamRef = useRef<HTMLDivElement>(null);
-  const externalLenRef = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (externalMessages.length <= externalLenRef.current) return;
-    const newOnes = externalMessages.slice(externalLenRef.current);
-    externalLenRef.current = externalMessages.length;
-    setMessages((prev) => [
-      ...prev,
-      ...newOnes.map<UIMessage>((m) => ({
-        id: m.id,
-        role: "system",
-        parts: [{ type: "text", text: m.content }],
-      })),
-    ]);
-  }, [externalMessages, setMessages]);
 
   useEffect(() => {
     const el = streamRef.current;
     if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [messages, status]);
+  }, [messages, externalMessages, status]);
 
   const isBusy = status === "submitted" || status === "streaming";
+  const lastAssistant = [...messages]
+    .reverse()
+    .find((m) => m.role === "assistant");
+  const showTyping =
+    status === "submitted" ||
+    (status === "streaming" &&
+      !messageText(
+        lastAssistant ?? { id: "", role: "assistant", parts: [] },
+      ));
 
   function submit() {
     const text = input.trim();
@@ -102,10 +112,10 @@ export function ChatPane({
 
   return (
     <section
-      className={`flex flex-col min-h-0 min-w-0 ${className}`.trim()}
+      className={`flex flex-col h-full min-h-0 min-w-0 ${className}`.trim()}
       aria-label={t(copy.dashboard.chatTitle, locale)}
     >
-      <div className="portal-card flex flex-col flex-1 min-h-0 p-5 sm:p-6">
+      <div className="portal-card flex flex-col flex-1 min-h-0 h-full overflow-hidden p-5 sm:p-6">
         <div className="mb-3 shrink-0 flex items-start justify-between gap-3 border-b border-[var(--postup-border)]/50 pb-3">
           <div>
             <h1 className="text-xl font-semibold tracking-tight m-0 text-postup-navy">
@@ -128,22 +138,11 @@ export function ChatPane({
 
         <div
           ref={streamRef}
-          className="flex-1 flex flex-col gap-3 overflow-y-auto min-h-[240px] py-2 pr-1"
+          className="scroll-region flex-1 flex flex-col gap-3 min-h-0 py-2 pr-1"
         >
           {messages.map((msg) => {
             const text = messageText(msg);
-
-            if (msg.role === "system") {
-              return (
-                <div
-                  key={msg.id}
-                  className="w-full rounded-[var(--postup-radius)] border border-[var(--postup-border)] bg-postup-bg px-3 py-2.5"
-                  role="status"
-                >
-                  <ChatMarkdown content={text} variant="system" />
-                </div>
-              );
-            }
+            if (!text && msg.role !== "user") return null;
 
             if (msg.role === "user") {
               return (
@@ -166,7 +165,17 @@ export function ChatPane({
             );
           })}
 
-          {status === "submitted" && (
+          {externalMessages.map((msg) => (
+            <div
+              key={msg.id}
+              className="w-full rounded-[var(--postup-radius)] border border-[var(--postup-border)] bg-postup-bg px-3 py-2.5"
+              role="status"
+            >
+              <ChatMarkdown content={msg.content} variant="system" />
+            </div>
+          ))}
+
+          {showTyping && (
             <div className="self-start max-w-[90%] bg-postup-soft border border-[var(--postup-border)]/40 px-4 py-2.5 rounded-[var(--postup-radius)] rounded-bl-sm">
               <TypingDots />
             </div>
