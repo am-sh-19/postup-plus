@@ -32,6 +32,7 @@ export interface Patient {
   username: string;
   dayPostOp: number;
   procedure: string;
+  procedureDetail?: string;
   surgeon: string;
   medication: Medication;
   movementGoal: MovementGoal;

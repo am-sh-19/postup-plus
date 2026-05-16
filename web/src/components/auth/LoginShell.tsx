@@ -41,7 +41,7 @@ export function LoginShell({
   return (
     <div className="login-surface min-h-screen flex flex-col">
       <header className="flex items-center justify-between px-6 pt-6 sm:px-10 sm:pt-8">
-        <LogoHomeLink height={36} />
+        <LogoHomeLink height={52} />
         <div className="lang-toggle" role="group" aria-label="Language">
           <button
             type="button"
@@ -87,7 +87,12 @@ export function LoginShell({
         </section>
 
         <section className="w-full max-w-[440px] mx-auto lg:ml-auto lg:mr-0">
-          <div className="login-card p-6 sm:p-8">{children}</div>
+          <div className="login-card p-6 sm:p-8">
+            <div className="flex justify-center mb-6 pb-5 border-b border-[var(--postup-border)]/50">
+              <LogoHomeLink height={72} />
+            </div>
+            {children}
+          </div>
           <p className="mt-4 text-center text-[12px] text-[oklch(0.5_0.04_245)] flex items-center justify-center gap-1.5">
             <svg
               aria-hidden

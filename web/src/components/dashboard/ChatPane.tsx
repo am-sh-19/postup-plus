@@ -3,6 +3,7 @@
 import { useChat, type UIMessage } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ChatMarkdown } from "@/components/chat/ChatMarkdown";
 import { copy, t } from "@/lib/copy";
 import type { ChatMessage, Locale, Patient } from "@/lib/types";
 
@@ -13,10 +14,16 @@ interface ChatPaneProps {
 }
 
 function seedMessages(patient: Patient, locale: Locale): UIMessage[] {
+  const detail =
+    patient.procedureDetail ??
+    (locale === "es"
+      ? "reemplazo total de cadera"
+      : "total hip replacement");
+
   const greeting =
     locale === "es"
-      ? `Hola ${patient.firstName}. Estoy aquí para ayudarle con su recuperación tras ${patient.procedure}. ¿Cómo se siente hoy?`
-      : `Hi ${patient.firstName}. I'm here to help with your recovery after ${patient.procedure}. How are you feeling today?`;
+      ? `Hola ${patient.firstName}. Estoy aquí para ayudarle con su recuperación tras su **${patient.procedure}** (${detail}).\n\n¿Cómo se siente la cadera hoy — en reposo y al caminar con el andador?`
+      : `Hi ${patient.firstName}. I'm here to help with your recovery after your **${patient.procedure}** (${detail}).\n\nHow is your hip feeling today — at rest and when walking with your walker?`;
 
   return [
     {
@@ -58,7 +65,6 @@ export function ChatPane({
   const externalLenRef = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Sync new external (sidebar) events into the chat as system bubbles.
   useEffect(() => {
     if (externalMessages.length <= externalLenRef.current) return;
     const newOnes = externalMessages.slice(externalLenRef.current);
@@ -73,7 +79,6 @@ export function ChatPane({
     ]);
   }, [externalMessages, setMessages]);
 
-  // Autoscroll on stream growth.
   useEffect(() => {
     const el = streamRef.current;
     if (!el) return;
@@ -95,7 +100,7 @@ export function ChatPane({
 
   return (
     <section className="flex-[0_0_60%] max-w-[60%] flex flex-col min-w-0 max-lg:flex-none max-lg:max-w-full max-lg:w-full">
-      <div className="flex-1 flex flex-col bg-white rounded-[var(--postup-rounded)] p-5 sm:p-6 shadow-sm min-h-0 border border-[var(--postup-border)]/50">
+      <div className="flex-1 flex flex-col card p-5 sm:p-6 min-h-0">
         <div className="mb-3 shrink-0 flex items-start justify-between gap-3">
           <div>
             <h1 className="text-xl font-semibold tracking-tight m-0">
@@ -127,14 +132,10 @@ export function ChatPane({
               return (
                 <div
                   key={msg.id}
-                  className="self-center max-w-[92%] text-center bg-postup-bg-2 text-postup-muted text-[13px] px-4 py-2.5 rounded-xl"
-                  dangerouslySetInnerHTML={{
-                    __html: text.replace(
-                      /\*\*(.*?)\*\*/g,
-                      "<strong>$1</strong>",
-                    ),
-                  }}
-                />
+                  className="self-center max-w-[92%] text-center bg-postup-bg-2 text-postup-muted text-[13px] px-4 py-2.5 rounded-xl border border-[var(--postup-border)]/60"
+                >
+                  <ChatMarkdown content={text} variant="system" />
+                </div>
               );
             }
 
@@ -142,9 +143,9 @@ export function ChatPane({
               return (
                 <div
                   key={msg.id}
-                  className="self-end max-w-[82%] bg-postup-blue text-white px-4 py-3 rounded-[20px] rounded-br-md text-[15px] leading-relaxed whitespace-pre-wrap"
+                  className="self-end max-w-[82%] bg-postup-blue text-white px-4 py-3 rounded-[18px] rounded-br-sm text-[15px] leading-relaxed shadow-sm"
                 >
-                  {text}
+                  <p className="m-0 whitespace-pre-wrap">{text}</p>
                 </div>
               );
             }
@@ -152,21 +153,21 @@ export function ChatPane({
             return (
               <div
                 key={msg.id}
-                className="self-start max-w-[82%] bg-postup-soft px-4 py-3 rounded-[20px] rounded-bl-md text-[15px] leading-relaxed whitespace-pre-wrap"
+                className="self-start max-w-[88%] bg-white border border-[var(--postup-border)] px-4 py-3 rounded-[18px] rounded-bl-sm shadow-sm"
               >
-                {text}
+                <ChatMarkdown content={text} variant="assistant" />
               </div>
             );
           })}
 
           {status === "submitted" && (
-            <div className="self-start max-w-[82%] bg-postup-soft px-4 py-3 rounded-[20px] rounded-bl-md text-[15px] leading-relaxed">
+            <div className="self-start max-w-[88%] bg-white border border-[var(--postup-border)] px-4 py-3 rounded-[18px] rounded-bl-sm">
               <TypingDots />
             </div>
           )}
 
           {error && (
-            <div className="self-center max-w-[92%] text-center bg-red-50 text-red-700 text-[13px] px-4 py-2.5 rounded-xl">
+            <div className="self-center max-w-[92%] text-center bg-red-50 text-red-700 text-[13px] px-4 py-2.5 rounded-xl border border-red-100">
               {locale === "es"
                 ? "No pude conectar. Intente de nuevo."
                 : "Couldn't connect. Try again."}
@@ -187,7 +188,7 @@ export function ChatPane({
               }
             }}
             placeholder={t(copy.dashboard.chatPlaceholder, locale)}
-            className="flex-1 rounded-full border border-[#c5d4e8] px-4 py-3.5 text-[15px] focus:outline-2 focus:outline-postup-blue disabled:opacity-60"
+            className="flex-1 rounded-[var(--postup-radius)] border border-[#c5d4e8] px-4 py-3 text-[15px] focus:outline-2 focus:outline-postup-blue disabled:opacity-60 bg-white"
             disabled={isBusy}
             autoFocus
           />
@@ -195,7 +196,7 @@ export function ChatPane({
             type="button"
             onClick={submit}
             disabled={isBusy || !input.trim()}
-            className="rounded-full bg-postup-blue text-white font-semibold px-6 py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary shrink-0 px-5 py-3"
           >
             {t(copy.dashboard.send, locale)}
           </button>

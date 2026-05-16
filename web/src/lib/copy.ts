@@ -62,8 +62,8 @@ export const copy = {
   dashboard: {
     chatTitle: { en: "Talk to your care team", es: "Hable con su equipo de cuidado" },
     chatSubtitle: {
-      en: "Ask about pain, medications, or recovery. Answers are tailored to your chart.",
-      es: "Pregunte sobre dolor, medicamentos o recuperación. Las respuestas se adaptan a su expediente.",
+      en: "Ask about hip pain, walker use, precautions, or meds — answers match your THA chart.",
+      es: "Pregunte sobre dolor de cadera, andador, precauciones o medicamentos — según su expediente THA.",
     },
     chatPlaceholder: {
       en: "Ask a question about your recovery…",
@@ -74,21 +74,24 @@ export const copy = {
     postOp: { en: "post-op", es: "postoperatorio" },
     moveTitle: { en: "Move a little, often", es: "Muévase un poco, con frecuencia" },
     moveBody: {
-      en: "Walk for 5 minutes every hour — short, frequent movement helps recovery and prevents stiffness.",
-      es: "Camine 5 minutos cada hora — el movimiento corto y frecuente ayuda a la recuperación.",
+      en: "Short walks with your walker — 5 minutes, often — help your new hip heal and reduce stiffness.",
+      es: "Caminatas cortas con el andador — 5 minutos, con frecuencia — ayudan a sanar la cadera nueva y reducen rigidez.",
     },
     nextWalk: { en: "Next walk due in", es: "Próxima caminata en" },
     walkNow: { en: "Time for a 5‑min walk now!", es: "¡Hora de caminar 5 min!" },
     logWalk: { en: "Log walk", es: "Registrar" },
     walkLogged: { en: "Walk logged — next in ~60 min", es: "Caminata registrada — próxima en ~60 min" },
-    painTitle: { en: "How much pain right now?", es: "¿Cuánto dolor ahora?" },
+    painTitle: {
+      en: "How does your new hip feel?",
+      es: "¿Cómo se siente su cadera nueva?",
+    },
     painHint: {
-      en: "Rate pain at your surgical site after ACL or shoulder surgery — 1 is comfortable, 10 is emergency-level.",
-      es: "Califique el dolor en la zona quirúrgica — 1 es cómodo, 10 es nivel de emergencia.",
+      en: "Rate hip, groin, thigh, or buttock pain after your total hip replacement — 1 is calm, 10 needs urgent care.",
+      es: "Califique dolor en cadera, ingle, muslo o glúteo tras el reemplazo total — 1 es tranquilo, 10 requiere atención urgente.",
     },
     sliderMin: {
-      en: "Comfortable",
-      es: "Cómodo",
+      en: "Hip calm",
+      es: "Cadera tranquila",
     },
     sliderMax: { en: "Call clinic", es: "Llame a la clínica" },
     functionalToggle: {

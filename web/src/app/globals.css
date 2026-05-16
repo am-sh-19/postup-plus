@@ -494,3 +494,66 @@ body {
 .animate-walk-pulse {
   animation: walk-pulse 2s ease-in-out infinite;
 }
+
+/* Chat markdown */
+.chat-markdown {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--postup-navy);
+}
+
+.chat-markdown--system {
+  font-size: 13px;
+  color: var(--postup-muted);
+}
+
+.chat-markdown__p {
+  margin: 0 0 0.65em;
+}
+
+.chat-markdown__p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-markdown__ul,
+.chat-markdown__ol {
+  margin: 0.35em 0 0.75em;
+  padding-left: 1.25em;
+}
+
+.chat-markdown__li {
+  margin: 0.2em 0;
+}
+
+.chat-markdown__li::marker {
+  color: var(--postup-blue-dark);
+}
+
+.chat-markdown__strong {
+  font-weight: 650;
+  color: var(--postup-navy);
+}
+
+.chat-markdown__link {
+  color: var(--postup-blue-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.chat-markdown__code {
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--postup-bg-2);
+  border: 1px solid var(--postup-border);
+}
+
+.chat-markdown__pre {
+  margin: 0.5em 0;
+  padding: 0.65em 0.85em;
+  border-radius: var(--postup-radius);
+  background: var(--postup-bg-2);
+  border: 1px solid var(--postup-border);
+  overflow-x: auto;
+  font-size: 13px;
+}

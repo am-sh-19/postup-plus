@@ -12,12 +12,13 @@
       "mrn": "MRN-48291",
       "username": "emily.person",
       "dayPostOp": 7,
-      "procedure": "ACL reconstruction",
+      "procedure": "total hip replacement (right)",
+      "procedureDetail": "Posterior-approach THA · weight-bearing as tolerated with rolling walker",
       "surgeon": "Dr. Sakkers",
       "medication": {
         "name": "Percocet 5/325 mg",
-        "rx": "1 tablet every 6 hours as needed for pain",
-        "duration": "Prescribed for 3 weeks post-op"
+        "rx": "1 tablet every 6 hours as needed for hip pain",
+        "duration": "Prescribed for 3 weeks post-op · take with food"
       },
       "movementGoal": {
         "walksPerDay": 8,
@@ -30,7 +31,7 @@
           "id": "a1",
           "type": "pain",
           "severity": "medium",
-          "message": "Pain 5/10 at last check-in — within expected range for day 7"
+          "message": "Hip/groin pain 5/10 at last check-in — common days 5–10 after THA; evening swelling noted"
         }
       ]
     },
@@ -41,12 +42,13 @@
       "mrn": "MRN-71903",
       "username": "gabriela.martinez",
       "dayPostOp": 5,
-      "procedure": "rotator cuff repair",
+      "procedure": "total hip replacement (left)",
+      "procedureDetail": "Posterior-approach THA · walker × 2 weeks, then cane as cleared",
       "surgeon": "Dr. Sakkers",
       "medication": {
         "name": "Percocet 5/325 mg",
-        "rx": "1 tablet every 6 hours as needed for pain",
-        "duration": "Prescribed for 3 weeks post-op"
+        "rx": "1 tablet every 6 hours as needed for hip pain",
+        "duration": "Prescribed for 3 weeks post-op · take with food"
       },
       "movementGoal": {
         "walksPerDay": 8,
@@ -70,10 +72,10 @@
       "level": 1,
       "emoji": "😌",
       "color": "#059669",
-      "label": { "en": "No surgical pain", "es": "Sin dolor quirúrgico" },
+      "label": { "en": "Hip feels calm", "es": "Cadera tranquila" },
       "desc": {
-        "en": "Surgical site feels comfortable at rest and with gentle movement.",
-        "es": "La zona quirúrgica se siente cómoda en reposo y con movimiento suave."
+        "en": "Little or no ache in the hip, groin, or thigh — comfortable at rest and with gentle steps.",
+        "es": "Poco o ningún dolor en cadera, ingle o muslo — cómoda en reposo y con pasos suaves."
       }
     },
     {
@@ -82,28 +84,28 @@
       "color": "#10b981",
       "label": { "en": "Barely there", "es": "Casi nada" },
       "desc": {
-        "en": "You notice the knee or shoulder only if you think about it.",
-        "es": "Solo nota la rodilla u hombro si lo piensa."
+        "en": "You notice the new hip only if you think about it — typical when icing and elevating the leg.",
+        "es": "Solo nota la cadera nueva si lo piensa — típico con hielo y elevación de la pierna."
       }
     },
     {
       "level": 3,
       "emoji": "😊",
       "color": "#34d399",
-      "label": { "en": "Mild soreness", "es": "Molestia leve" },
+      "label": { "en": "Mild hip ache", "es": "Molestia leve" },
       "desc": {
-        "en": "Typical post-op ache — ice and elevation usually help.",
-        "es": "Molestia típica postoperatoria — hielo y elevación suelen ayudar."
+        "en": "Normal post-THA soreness — often worse in the evening; short walks with the walker still feel OK.",
+        "es": "Molestia normal post-THA — a menudo peor por la tarde; caminatas cortas con andador aún están bien."
       }
     },
     {
       "level": 4,
       "emoji": "😐",
       "color": "#fbbf24",
-      "label": { "en": "Uncomfortable", "es": "Incómodo" },
+      "label": { "en": "Stiff & sore", "es": "Rigidez y dolor" },
       "desc": {
-        "en": "Stiff when standing or during PT exercises; still manageable.",
-        "es": "Rigidez al levantarse o en ejercicios de PT; aún manejable."
+        "en": "Stiff after sitting — common with posterior hip precautions; loosens after a few steps.",
+        "es": "Rigidez al sentarse — común con precauciones posteriores; mejora tras unos pasos."
       }
     },
     {
@@ -112,8 +114,8 @@
       "color": "#f59e0b",
       "label": { "en": "Moderate", "es": "Moderado" },
       "desc": {
-        "en": "Common on days 5–10 — limits speed, not basic self-care.",
-        "es": "Común en días 5–10 — limita velocidad, no el autocuidado básico."
+        "en": "Aching hip, groin, or buttock — typical days 5–10; thigh bruising or ankle swelling may be up.",
+        "es": "Dolor en cadera, ingle o glúteo — típico días 5–10; puede haber más moretón en muslo o hinchazón en tobillo."
       }
     },
     {
@@ -122,8 +124,8 @@
       "color": "#fb923c",
       "label": { "en": "Hard to ignore", "es": "Difícil de ignorar" },
       "desc": {
-        "en": "Pain pulls focus during walks or transfers — worth logging for your team.",
-        "es": "El dolor distrae al caminar o transferirse — conviene registrarlo."
+        "en": "Pain during transfers or PT — worth logging; therapy soreness should ease within 30–60 min with ice.",
+        "es": "Dolor al transferirse o en PT — conviene registrarlo; el dolor de terapia suele calmarse en 30–60 min con hielo."
       }
     },
     {
@@ -132,8 +134,8 @@
       "color": "#f97316",
       "label": { "en": "Distressing", "es": "Angustiante" },
       "desc": {
-        "en": "Strong throbbing or sharp pain — contact clinic if new or worsening.",
-        "es": "Dolor fuerte punzante — llame si es nuevo o empeora."
+        "en": "Strong throbbing in the hip or thigh — contact clinic if new, sudden, or not helped by scheduled meds.",
+        "es": "Pulsación fuerte en cadera o muslo — llame si es nuevo, repentino o no mejora con medicamentos programados."
       }
     },
     {
@@ -142,8 +144,8 @@
       "color": "#ef4444",
       "label": { "en": "Severe", "es": "Severo" },
       "desc": {
-        "en": "Hard to sleep or bear weight — clinic should review today.",
-        "es": "Dificulta dormir o soportar peso — la clínica debe revisar hoy."
+        "en": "Hard to sleep or bear weight on the surgical leg — clinic should review today.",
+        "es": "Dificulta dormir o soportar peso en la pierna operada — la clínica debe revisar hoy."
       }
     },
     {
@@ -152,8 +154,8 @@
       "color": "#dc2626",
       "label": { "en": "Very severe", "es": "Muy severo" },
       "desc": {
-        "en": "Pain dominates activity; swelling or redness may be up — call clinic.",
-        "es": "El dolor domina la actividad; puede haber más hinchazón — llame."
+        "en": "Pain dominates activity; worsening redness, drainage, or calf swelling — call clinic now.",
+        "es": "El dolor domina la actividad; más enrojecimiento, secreción o hinchazón de pantorrilla — llame ya."
       }
     },
     {
@@ -162,8 +164,8 @@
       "color": "#b91c1c",
       "label": { "en": "Worst imaginable", "es": "Lo peor imaginable" },
       "desc": {
-        "en": "Emergency-level pain — call clinic now or seek urgent care.",
-        "es": "Dolor de emergencia — llame a la clínica o busque atención urgente."
+        "en": "Emergency — sudden severe hip pain, leg shortened/rotated, chest pain, or trouble breathing: call 911.",
+        "es": "Emergencia — dolor súbito severo, pierna acortada/rotada, dolor de pecho o falta de aire: llame al 911."
       }
     }
   ]

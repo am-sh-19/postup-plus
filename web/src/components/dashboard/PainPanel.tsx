@@ -13,11 +13,19 @@ interface PainPanelProps {
 const FUNCTIONAL = [
   {
     key: "walk",
-    en: "Walk across room",
-    es: "Caminar por la habitación",
+    en: "Walk with walker (5 min)",
+    es: "Caminar con andador (5 min)",
   },
-  { key: "sit", en: "Sit 10 min", es: "Sentarse 10 min" },
-  { key: "stairs", en: "One stair", es: "Un escalón" },
+  {
+    key: "sit",
+    en: "Sit with hip precautions",
+    es: "Sentarse con precauciones de cadera",
+  },
+  {
+    key: "stairs",
+    en: "Dress lower body / toilet",
+    es: "Vestirse abajo / baño",
+  },
 ] as const;
 
 type Chip = "yes" | "help" | "no";
