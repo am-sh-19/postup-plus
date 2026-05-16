@@ -32,6 +32,7 @@
   --color-postup-bg-2: var(--postup-bg-2);
   --color-postup-move-soft: var(--postup-move-soft);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-display);
 }
 
 body {
@@ -192,6 +193,292 @@ body {
   border: 2px solid var(--postup-navy);
   box-shadow: 0 1px 4px rgba(2, 31, 83, 0.2);
   cursor: pointer;
+}
+
+/* ──────────────────────────────────────────────────────────
+   Login surface — soft dawn gradient, refined card.
+   ──────────────────────────────────────────────────────── */
+
+.login-surface {
+  position: relative;
+  isolation: isolate;
+  background-color: oklch(0.985 0.005 250);
+  background-image:
+    radial-gradient(
+      80% 60% at 8% 14%,
+      oklch(0.94 0.06 175 / 0.55),
+      transparent 60%
+    ),
+    radial-gradient(
+      70% 55% at 92% 8%,
+      oklch(0.93 0.07 235 / 0.5),
+      transparent 60%
+    ),
+    radial-gradient(
+      90% 70% at 80% 100%,
+      oklch(0.91 0.06 250 / 0.55),
+      transparent 65%
+    ),
+    radial-gradient(
+      60% 50% at 30% 92%,
+      oklch(0.96 0.04 145 / 0.45),
+      transparent 60%
+    );
+}
+
+/* Subtle grain — breaks the smooth-gradient AI-slop look. */
+.login-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.2 0 0 0 0 0.4 0 0 0 0.22 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+}
+
+.login-card {
+  background: oklch(1 0 0 / 0.86);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border: 1px solid oklch(0.85 0.02 245 / 0.6);
+  border-radius: 20px;
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / 0.7) inset,
+    0 1px 2px oklch(0.4 0.05 245 / 0.06),
+    0 18px 40px -16px oklch(0.35 0.08 245 / 0.22),
+    0 32px 64px -28px oklch(0.3 0.07 245 / 0.18);
+}
+
+.login-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid oklch(0.86 0.015 245);
+  background: oklch(1 0 0 / 0.85);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--postup-navy);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.login-input::placeholder {
+  color: oklch(0.65 0.02 245);
+}
+
+.login-input:hover {
+  border-color: oklch(0.78 0.03 240);
+}
+
+.login-input:focus {
+  outline: none;
+  background: oklch(1 0 0);
+  border-color: var(--postup-blue);
+  box-shadow:
+    0 0 0 3px oklch(0.7 0.16 240 / 0.18),
+    0 1px 0 oklch(1 0 0 / 0.8) inset;
+}
+
+.login-input[aria-invalid="true"] {
+  border-color: oklch(0.6 0.18 25);
+  box-shadow: 0 0 0 3px oklch(0.6 0.18 25 / 0.16);
+}
+
+/* Pill segmented role switcher with sliding indicator */
+.role-pill {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  background: oklch(0.95 0.01 245);
+  border: 1px solid oklch(0.88 0.015 245);
+  border-radius: 999px;
+}
+
+.role-pill__thumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 999px;
+  background: oklch(1 0 0);
+  box-shadow:
+    0 1px 2px oklch(0.35 0.08 245 / 0.1),
+    0 4px 10px -4px oklch(0.35 0.08 245 / 0.18);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.role-pill__thumb[data-role="provider"] {
+  transform: translateX(100%);
+}
+
+.role-pill__option {
+  position: relative;
+  z-index: 1;
+  padding: 11px 14px;
+  min-height: 40px;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: oklch(0.5 0.03 245);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: color 200ms ease;
+}
+
+.role-pill__option[aria-selected="true"] {
+  color: var(--postup-navy);
+}
+
+.role-pill__option:focus-visible {
+  outline: 2px solid var(--postup-blue);
+  outline-offset: 2px;
+}
+
+/* Primary submit button */
+.login-submit {
+  position: relative;
+  width: 100%;
+  padding: 13px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    oklch(0.28 0.13 256) 0%,
+    oklch(0.22 0.13 258) 100%
+  );
+  color: oklch(0.99 0 0);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / 0.18) inset,
+    0 -1px 0 oklch(0 0 0 / 0.1) inset,
+    0 1px 2px oklch(0.2 0.1 250 / 0.3),
+    0 8px 20px -8px oklch(0.2 0.1 250 / 0.4);
+  transition:
+    transform 120ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease;
+}
+
+.login-submit:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.login-submit:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / 0.12) inset,
+    0 1px 2px oklch(0.2 0.1 250 / 0.3);
+}
+
+.login-submit:focus-visible {
+  outline: 2px solid oklch(0.7 0.16 240);
+  outline-offset: 3px;
+}
+
+.login-submit:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.login-submit__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid oklch(1 0 0 / 0.35);
+  border-top-color: oklch(1 0 0);
+  border-radius: 50%;
+  animation: login-spin 0.7s linear infinite;
+}
+
+@keyframes login-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Display headline */
+.login-headline {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  color: var(--postup-navy);
+}
+
+.login-headline em {
+  font-style: italic;
+  color: oklch(0.55 0.12 240);
+}
+
+/* Reassurance pillars on the brand side */
+.login-pillar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: oklch(0.4 0.04 245);
+}
+
+.login-pillar__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--postup-green-dark);
+  box-shadow: 0 0 0 4px oklch(0.94 0.07 165 / 0.5);
+}
+
+/* Demo chip */
+.demo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: oklch(0.96 0.015 245);
+  border: 1px solid oklch(0.88 0.015 245);
+  font-size: 12px;
+  font-weight: 500;
+  color: oklch(0.4 0.04 245);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 160ms ease;
+}
+
+.demo-chip:hover {
+  background: oklch(0.94 0.02 245);
+}
+
+.demo-chip kbd {
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--postup-navy);
+  background: oklch(1 0 0);
+  border: 1px solid oklch(0.86 0.015 245);
+  border-radius: 6px;
+  padding: 1px 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .role-pill__thumb,
+  .login-input,
+  .login-submit {
+    transition: none;
+  }
+  .login-submit__spinner {
+    animation: none;
+  }
 }
 
 @keyframes walk-pulse {

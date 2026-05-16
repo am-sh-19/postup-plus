@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ProviderScaffold, ProviderShell } from "@/components/provider";
+import { PatientChart, ProviderShell } from "@/components/provider";
 import { getProviderSession } from "@/lib/session";
 import type { Locale } from "@/lib/types";
 
@@ -31,7 +31,7 @@ export default function ProviderPage() {
 
   return (
     <ProviderShell locale={locale} activeNav="patients">
-      <ProviderScaffold locale={locale} />
+      <PatientChart locale={locale} />
     </ProviderShell>
   );
 }

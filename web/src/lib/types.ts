@@ -82,3 +82,142 @@ export interface ProviderSession {
 }
 
 export type Session = PatientSession | ProviderSession;
+
+// ────────────────────────────────────────────────────────────────
+// Provider chart data — read from src/data/patient-charts.json.
+// Schema below is the contract the collaborator's hardcoded JSON
+// push will conform to. Don't widen these without updating that file.
+// ────────────────────────────────────────────────────────────────
+
+export type FunctionalRating = "yes" | "help" | "no";
+
+export type SymptomTag =
+  | "neuropathic"
+  | "swelling"
+  | "nighttime"
+  | "movement"
+  | "skin"
+  | "mood";
+
+export interface PainEntry {
+  timestamp: string; // ISO 8601
+  pod: number; // post-op day, 0-based
+  level: number; // 1–10
+  emoji?: string;
+  note?: string;
+}
+
+export interface WalkEntry {
+  timestamp: string;
+  pod: number;
+  minutes: number;
+}
+
+export interface DoseEntry {
+  timestamp: string;
+  pod: number;
+  drug: string;
+  taken: boolean;
+  withFood?: boolean;
+  scheduled?: boolean; // true means this slot was expected; missing if pure ad-hoc
+}
+
+export interface FunctionalCheckEntry {
+  timestamp: string;
+  pod: number;
+  walk: FunctionalRating;
+  sit: FunctionalRating;
+  stairs: FunctionalRating;
+}
+
+export interface SymptomNote {
+  timestamp: string;
+  pod: number;
+  text: string;
+  tags?: SymptomTag[];
+}
+
+export interface MedicationOrder {
+  drug: string;
+  dose: string;
+  schedule: string;
+  startPod: number;
+  endPod?: number;
+  status: "active" | "tapering" | "complete";
+}
+
+export interface PatientChartMeta {
+  patientId: PatientId;
+  firstName: string;
+  lastName: string;
+  mrn: string;
+  age: number;
+  sex: "F" | "M" | "X";
+  procedure: string;
+  procedureLong: string;
+  surgeon: string;
+  allergies: string;
+  phoneMasked: string;
+  language: Locale;
+  surgeryDateIso: string;
+  todayPod: number;
+  expectedRecoveryPodDays: number;
+  lastSyncIso: string;
+}
+
+export interface PatientChart {
+  meta: PatientChartMeta;
+  pain: PainEntry[];
+  walks: WalkEntry[];
+  doses: DoseEntry[];
+  functional: FunctionalCheckEntry[];
+  symptoms: SymptomNote[];
+  medications: MedicationOrder[];
+}
+
+// ────────────────────────────────────────────────────────────────
+// Provider derived data — signals, recommendations, proposed plan
+// ────────────────────────────────────────────────────────────────
+
+export type SignalSeverity = "critical" | "warn" | "info";
+
+export type SignalSource =
+  | "pain-plateau"
+  | "missed-doses"
+  | "low-walks"
+  | "neuropathic-language"
+  | "night-pain"
+  | "function-regression";
+
+export interface Signal {
+  id: string;
+  severity: SignalSeverity;
+  source: SignalSource;
+  title: Record<Locale, string>;
+  detail: Record<Locale, string>;
+  expected?: Record<Locale, string>;
+  focusPod?: { start: number; end: number };
+}
+
+export type RecommendationKind = "primary" | "adjunct" | "taper" | "non-pharm";
+
+export interface RxRecommendation {
+  id: string;
+  drug: string;
+  dose: string;
+  duration: string;
+  rationale: Record<Locale, string>;
+  evidenceQuery: string;
+  relatedSignalIds: string[];
+  kind: RecommendationKind;
+}
+
+export interface PlanItem {
+  id: string;
+  recommendationId?: string;
+  drug: string;
+  dose: string;
+  duration: string;
+  reason: string;
+  addedAtIso: string;
+}

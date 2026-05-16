@@ -1,0 +1,201 @@
+{
+  "emily": {
+    "meta": {
+      "patientId": "emily",
+      "firstName": "Emily",
+      "lastName": "Person",
+      "mrn": "MRN-48291",
+      "age": 34,
+      "sex": "F",
+      "procedure": "ACL reconstruction",
+      "procedureLong": "Left ACL reconstruction (BTB autograft)",
+      "surgeon": "Sakkers, MD",
+      "allergies": "NKDA",
+      "phoneMasked": "••• ••• 3492",
+      "language": "en",
+      "surgeryDateIso": "2026-05-09T07:30:00Z",
+      "todayPod": 7,
+      "expectedRecoveryPodDays": 14,
+      "lastSyncIso": "2026-05-16T14:22:00Z"
+    },
+    "pain": [
+      { "timestamp": "2026-05-09T14:00:00Z", "pod": 0, "level": 4, "note": "still groggy from block" },
+      { "timestamp": "2026-05-09T20:00:00Z", "pod": 0, "level": 8, "note": "block worn off, throbbing" },
+      { "timestamp": "2026-05-10T08:00:00Z", "pod": 1, "level": 7 },
+      { "timestamp": "2026-05-10T12:00:00Z", "pod": 1, "level": 8 },
+      { "timestamp": "2026-05-10T16:00:00Z", "pod": 1, "level": 7 },
+      { "timestamp": "2026-05-10T20:00:00Z", "pod": 1, "level": 8 },
+      { "timestamp": "2026-05-11T08:00:00Z", "pod": 2, "level": 7 },
+      { "timestamp": "2026-05-11T12:00:00Z", "pod": 2, "level": 6 },
+      { "timestamp": "2026-05-11T16:00:00Z", "pod": 2, "level": 7 },
+      { "timestamp": "2026-05-11T20:00:00Z", "pod": 2, "level": 6 },
+      { "timestamp": "2026-05-12T08:00:00Z", "pod": 3, "level": 5 },
+      { "timestamp": "2026-05-12T12:00:00Z", "pod": 3, "level": 5 },
+      { "timestamp": "2026-05-12T16:00:00Z", "pod": 3, "level": 6 },
+      { "timestamp": "2026-05-12T20:00:00Z", "pod": 3, "level": 5 },
+      { "timestamp": "2026-05-13T08:00:00Z", "pod": 4, "level": 5 },
+      { "timestamp": "2026-05-13T12:00:00Z", "pod": 4, "level": 4 },
+      { "timestamp": "2026-05-13T16:00:00Z", "pod": 4, "level": 5 },
+      { "timestamp": "2026-05-13T20:00:00Z", "pod": 4, "level": 5 },
+      { "timestamp": "2026-05-14T08:00:00Z", "pod": 5, "level": 5 },
+      { "timestamp": "2026-05-14T12:00:00Z", "pod": 5, "level": 6 },
+      { "timestamp": "2026-05-14T16:00:00Z", "pod": 5, "level": 6 },
+      { "timestamp": "2026-05-14T20:00:00Z", "pod": 5, "level": 7, "note": "evening uptick" },
+      { "timestamp": "2026-05-15T08:00:00Z", "pod": 6, "level": 6 },
+      { "timestamp": "2026-05-15T12:00:00Z", "pod": 6, "level": 6 },
+      { "timestamp": "2026-05-15T16:00:00Z", "pod": 6, "level": 7 },
+      { "timestamp": "2026-05-15T20:00:00Z", "pod": 6, "level": 7 },
+      { "timestamp": "2026-05-16T08:00:00Z", "pod": 7, "level": 6 },
+      { "timestamp": "2026-05-16T11:14:00Z", "pod": 7, "level": 6, "note": "hurts when I stand up" },
+      { "timestamp": "2026-05-16T14:30:00Z", "pod": 7, "level": 7 }
+    ],
+    "walks": [
+      { "timestamp": "2026-05-10T14:30:00Z", "pod": 1, "minutes": 4 },
+      { "timestamp": "2026-05-10T18:00:00Z", "pod": 1, "minutes": 5 },
+      { "timestamp": "2026-05-11T10:00:00Z", "pod": 2, "minutes": 5 },
+      { "timestamp": "2026-05-11T14:00:00Z", "pod": 2, "minutes": 5 },
+      { "timestamp": "2026-05-11T18:30:00Z", "pod": 2, "minutes": 4 },
+      { "timestamp": "2026-05-12T09:00:00Z", "pod": 3, "minutes": 5 },
+      { "timestamp": "2026-05-12T11:30:00Z", "pod": 3, "minutes": 6 },
+      { "timestamp": "2026-05-12T13:00:00Z", "pod": 3, "minutes": 5 },
+      { "timestamp": "2026-05-12T16:00:00Z", "pod": 3, "minutes": 6 },
+      { "timestamp": "2026-05-12T19:00:00Z", "pod": 3, "minutes": 5 },
+      { "timestamp": "2026-05-13T08:30:00Z", "pod": 4, "minutes": 6 },
+      { "timestamp": "2026-05-13T10:30:00Z", "pod": 4, "minutes": 5 },
+      { "timestamp": "2026-05-13T12:30:00Z", "pod": 4, "minutes": 6 },
+      { "timestamp": "2026-05-13T14:30:00Z", "pod": 4, "minutes": 7 },
+      { "timestamp": "2026-05-13T16:30:00Z", "pod": 4, "minutes": 5 },
+      { "timestamp": "2026-05-13T18:30:00Z", "pod": 4, "minutes": 6 },
+      { "timestamp": "2026-05-13T20:30:00Z", "pod": 4, "minutes": 5 },
+      { "timestamp": "2026-05-14T10:00:00Z", "pod": 5, "minutes": 4 },
+      { "timestamp": "2026-05-14T14:00:00Z", "pod": 5, "minutes": 5 },
+      { "timestamp": "2026-05-14T18:00:00Z", "pod": 5, "minutes": 4 },
+      { "timestamp": "2026-05-15T10:30:00Z", "pod": 6, "minutes": 5 },
+      { "timestamp": "2026-05-15T14:30:00Z", "pod": 6, "minutes": 4 },
+      { "timestamp": "2026-05-15T18:30:00Z", "pod": 6, "minutes": 5 },
+      { "timestamp": "2026-05-16T09:00:00Z", "pod": 7, "minutes": 5 },
+      { "timestamp": "2026-05-16T11:30:00Z", "pod": 7, "minutes": 6 },
+      { "timestamp": "2026-05-16T14:00:00Z", "pod": 7, "minutes": 5 }
+    ],
+    "doses": [
+      { "timestamp": "2026-05-09T18:00:00Z", "pod": 0, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-10T00:00:00Z", "pod": 1, "drug": "Percocet 5/325 mg", "taken": true, "withFood": false, "scheduled": true },
+      { "timestamp": "2026-05-10T06:00:00Z", "pod": 1, "drug": "Percocet 5/325 mg", "taken": true, "withFood": false, "scheduled": true },
+      { "timestamp": "2026-05-10T12:00:00Z", "pod": 1, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-10T18:00:00Z", "pod": 1, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-11T00:00:00Z", "pod": 2, "drug": "Percocet 5/325 mg", "taken": false, "scheduled": true },
+      { "timestamp": "2026-05-11T06:00:00Z", "pod": 2, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-11T12:00:00Z", "pod": 2, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-11T18:00:00Z", "pod": 2, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-12T00:00:00Z", "pod": 3, "drug": "Percocet 5/325 mg", "taken": true, "withFood": false, "scheduled": true },
+      { "timestamp": "2026-05-12T06:00:00Z", "pod": 3, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-12T12:00:00Z", "pod": 3, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-12T18:00:00Z", "pod": 3, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-13T00:00:00Z", "pod": 4, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-13T06:00:00Z", "pod": 4, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-13T12:00:00Z", "pod": 4, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-13T18:00:00Z", "pod": 4, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-14T00:00:00Z", "pod": 5, "drug": "Percocet 5/325 mg", "taken": false, "scheduled": true },
+      { "timestamp": "2026-05-14T06:00:00Z", "pod": 5, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-14T12:00:00Z", "pod": 5, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-14T18:00:00Z", "pod": 5, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-15T00:00:00Z", "pod": 6, "drug": "Percocet 5/325 mg", "taken": true, "withFood": false, "scheduled": true },
+      { "timestamp": "2026-05-15T06:00:00Z", "pod": 6, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-15T12:00:00Z", "pod": 6, "drug": "Percocet 5/325 mg", "taken": false, "scheduled": true },
+      { "timestamp": "2026-05-15T18:00:00Z", "pod": 6, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-16T00:00:00Z", "pod": 7, "drug": "Percocet 5/325 mg", "taken": false, "scheduled": true },
+      { "timestamp": "2026-05-16T06:00:00Z", "pod": 7, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-16T12:00:00Z", "pod": 7, "drug": "Percocet 5/325 mg", "taken": false, "scheduled": true }
+    ],
+    "functional": [
+      { "timestamp": "2026-05-13T08:00:00Z", "pod": 4, "walk": "yes", "sit": "yes", "stairs": "no" },
+      { "timestamp": "2026-05-14T08:00:00Z", "pod": 5, "walk": "help", "sit": "yes", "stairs": "no" },
+      { "timestamp": "2026-05-15T08:00:00Z", "pod": 6, "walk": "help", "sit": "yes", "stairs": "no" },
+      { "timestamp": "2026-05-16T08:00:00Z", "pod": 7, "walk": "help", "sit": "yes", "stairs": "no" }
+    ],
+    "symptoms": [
+      { "timestamp": "2026-05-10T09:15:00Z", "pod": 1, "text": "knee is throbbing pretty bad", "tags": ["swelling"] },
+      { "timestamp": "2026-05-12T11:00:00Z", "pod": 3, "text": "lots of swelling when I stand", "tags": ["swelling", "movement"] },
+      { "timestamp": "2026-05-14T22:00:00Z", "pod": 5, "text": "burning sensation down the leg", "tags": ["neuropathic"] },
+      { "timestamp": "2026-05-15T23:30:00Z", "pod": 6, "text": "shooting pain wakes me up at night", "tags": ["neuropathic", "nighttime"] },
+      { "timestamp": "2026-05-16T08:42:00Z", "pod": 7, "text": "it's swollen and hurts when I stand up", "tags": ["swelling", "movement"] }
+    ],
+    "medications": [
+      {
+        "drug": "Percocet 5/325 mg",
+        "dose": "1 tablet PO",
+        "schedule": "every 6 hours PRN pain",
+        "startPod": 0,
+        "endPod": 21,
+        "status": "active"
+      }
+    ]
+  },
+  "gabriela": {
+    "meta": {
+      "patientId": "gabriela",
+      "firstName": "Gabriela",
+      "lastName": "Martinez",
+      "mrn": "MRN-71903",
+      "age": 58,
+      "sex": "F",
+      "procedure": "rotator cuff repair",
+      "procedureLong": "Right rotator cuff repair (arthroscopic)",
+      "surgeon": "Patel, MD",
+      "allergies": "Penicillin",
+      "phoneMasked": "••• ••• 1085",
+      "language": "es",
+      "surgeryDateIso": "2026-05-11T07:30:00Z",
+      "todayPod": 5,
+      "expectedRecoveryPodDays": 14,
+      "lastSyncIso": "2026-05-16T13:40:00Z"
+    },
+    "pain": [
+      { "timestamp": "2026-05-11T14:00:00Z", "pod": 0, "level": 5 },
+      { "timestamp": "2026-05-11T20:00:00Z", "pod": 0, "level": 7 },
+      { "timestamp": "2026-05-12T08:00:00Z", "pod": 1, "level": 6 },
+      { "timestamp": "2026-05-12T20:00:00Z", "pod": 1, "level": 6 },
+      { "timestamp": "2026-05-13T08:00:00Z", "pod": 2, "level": 5 },
+      { "timestamp": "2026-05-13T20:00:00Z", "pod": 2, "level": 5 },
+      { "timestamp": "2026-05-14T08:00:00Z", "pod": 3, "level": 4 },
+      { "timestamp": "2026-05-14T20:00:00Z", "pod": 3, "level": 4 },
+      { "timestamp": "2026-05-15T08:00:00Z", "pod": 4, "level": 4 },
+      { "timestamp": "2026-05-15T20:00:00Z", "pod": 4, "level": 3 },
+      { "timestamp": "2026-05-16T08:00:00Z", "pod": 5, "level": 3 }
+    ],
+    "walks": [
+      { "timestamp": "2026-05-12T10:00:00Z", "pod": 1, "minutes": 5 },
+      { "timestamp": "2026-05-13T10:00:00Z", "pod": 2, "minutes": 5 },
+      { "timestamp": "2026-05-13T16:00:00Z", "pod": 2, "minutes": 5 },
+      { "timestamp": "2026-05-14T10:00:00Z", "pod": 3, "minutes": 6 },
+      { "timestamp": "2026-05-14T15:00:00Z", "pod": 3, "minutes": 6 },
+      { "timestamp": "2026-05-15T09:00:00Z", "pod": 4, "minutes": 7 },
+      { "timestamp": "2026-05-15T15:00:00Z", "pod": 4, "minutes": 6 },
+      { "timestamp": "2026-05-16T09:00:00Z", "pod": 5, "minutes": 6 }
+    ],
+    "doses": [
+      { "timestamp": "2026-05-11T18:00:00Z", "pod": 0, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-12T00:00:00Z", "pod": 1, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-12T06:00:00Z", "pod": 1, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-12T12:00:00Z", "pod": 1, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true },
+      { "timestamp": "2026-05-12T18:00:00Z", "pod": 1, "drug": "Percocet 5/325 mg", "taken": true, "withFood": true, "scheduled": true }
+    ],
+    "functional": [
+      { "timestamp": "2026-05-15T08:00:00Z", "pod": 4, "walk": "yes", "sit": "yes", "stairs": "yes" },
+      { "timestamp": "2026-05-16T08:00:00Z", "pod": 5, "walk": "yes", "sit": "yes", "stairs": "yes" }
+    ],
+    "symptoms": [
+      { "timestamp": "2026-05-12T11:00:00Z", "pod": 1, "text": "shoulder feels tight in the sling", "tags": ["movement"] }
+    ],
+    "medications": [
+      {
+        "drug": "Percocet 5/325 mg",
+        "dose": "1 tablet PO",
+        "schedule": "every 6 hours PRN pain",
+        "startPod": 0,
+        "endPod": 21,
+        "status": "active"
+      }
+    ]
+  }
+}

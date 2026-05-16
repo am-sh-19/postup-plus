@@ -1,2 +1,2 @@
-export { ProviderScaffold } from "./ProviderScaffold";
+export { PatientChart } from "./PatientChart";
 export { ProviderShell, PROVIDER_NAV } from "./ProviderShell";
