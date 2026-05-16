@@ -130,7 +130,7 @@ export function ChatPane({
 
   return (
     <section className="flex-[0_0_60%] max-w-[60%] flex flex-col min-w-0 max-lg:flex-none max-lg:max-w-full max-lg:w-full">
-      <div className="flex-1 flex flex-col bg-white rounded-[var(--postup-rounded)] p-5 sm:p-6 shadow-sm min-h-0 border border-[var(--postup-border)]/50">
+      <div className="flex-1 flex flex-col card p-5 sm:p-6 min-h-0">
         <div className="mb-3 shrink-0">
           <h1 className="text-xl font-semibold tracking-tight m-0">
             {t(copy.dashboard.chatTitle, locale)}
@@ -163,7 +163,7 @@ export function ChatPane({
               return (
                 <div
                   key={msg.id}
-                  className="self-end max-w-[82%] bg-postup-blue text-white px-4 py-3 rounded-[20px] rounded-br-md text-[15px] leading-relaxed"
+                  className="self-end max-w-[82%] bg-postup-navy text-white px-3.5 py-2.5 rounded-[var(--postup-radius)] text-[15px] leading-relaxed"
                 >
                   {msg.content}
                 </div>
@@ -172,7 +172,7 @@ export function ChatPane({
             return (
               <div
                 key={msg.id}
-                className="self-start max-w-[82%] bg-postup-soft px-4 py-3 rounded-[20px] rounded-bl-md text-[15px] leading-relaxed"
+                  className="self-start max-w-[82%] bg-postup-bg px-3.5 py-2.5 rounded-[var(--postup-radius)] border border-[var(--postup-border)] text-[15px] leading-relaxed"
               >
                 {msg.content}
                 {msg.timestamp && (
@@ -192,14 +192,14 @@ export function ChatPane({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder={t(copy.dashboard.chatPlaceholder, locale)}
-            className="flex-1 rounded-full border border-[#c5d4e8] px-4 py-3.5 text-[15px] focus:outline-2 focus:outline-postup-blue"
+            className="input-field flex-1"
             disabled={sending}
           />
           <button
             type="button"
             onClick={sendMessage}
             disabled={sending}
-            className="rounded-full bg-postup-blue text-white font-semibold px-6 py-3.5 disabled:opacity-60"
+            className="btn-primary w-auto px-5 shrink-0 disabled:opacity-60"
           >
             {t(copy.dashboard.send, locale)}
           </button>

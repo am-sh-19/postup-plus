@@ -1,3 +1,4 @@
+import { getPatients } from "@/lib/data";
 import type { Locale } from "@/lib/types";
 
 const SECTIONS = [
@@ -5,39 +6,19 @@ const SECTIONS = [
     id: "patient-list",
     titleEn: "Patient list",
     titleEs: "Lista de pacientes",
-    descEn:
-      "Table or cards of active post-op patients. Start with demo patients Emily Person and Gabriela Martinez from @/lib/patients.",
-    descEs:
-      "Tabla o tarjetas de pacientes postoperatorios activos. Comience con Emily Person y Gabriela Martinez de @/lib/patients.",
     fileHint: "components/provider/PatientListPanel.tsx",
   },
   {
     id: "alerts",
     titleEn: "Pain & adherence alerts",
     titleEs: "Alertas de dolor y adherencia",
-    descEn:
-      "Surface high pain scores, missed Percocet doses, and low movement. Hook into patient check-in data when available.",
-    descEs:
-      "Muestre dolor alto, dosis omitidas de Percocet y poco movimiento. Conecte con datos de check-in cuando estén disponibles.",
     fileHint: "components/provider/AlertsPanel.tsx",
   },
   {
     id: "patient-detail",
-    titleEn: "Patient detail drawer",
+    titleEn: "Patient detail",
     titleEs: "Detalle del paciente",
-    descEn:
-      "Chart summary, pain trend, meds, last chat — drill-down from list row.",
-    descEs:
-      "Resumen, tendencia de dolor, medicamentos, último chat — al seleccionar un paciente.",
     fileHint: "components/provider/PatientDetailPanel.tsx",
-  },
-  {
-    id: "messages",
-    titleEn: "Care team messages",
-    titleEs: "Mensajes del equipo",
-    descEn: "Optional: async messages or escalations from the patient chatbot.",
-    descEs: "Opcional: mensajes asíncronos o escalaciones del chatbot del paciente.",
-    fileHint: "components/provider/MessagesPanel.tsx",
   },
 ] as const;
 
@@ -46,52 +27,67 @@ interface ProviderScaffoldProps {
 }
 
 export function ProviderScaffold({ locale }: ProviderScaffoldProps) {
+  const patients = getPatients();
+
   return (
     <div className="max-w-4xl">
-      <h1 className="text-2xl font-semibold text-postup-navy m-0">
-        {locale === "es" ? "Vista del proveedor" : "Provider view"}
+      <h1 className="text-xl font-semibold text-postup-navy m-0 tracking-tight">
+        {locale === "es" ? "Panel del proveedor" : "Provider dashboard"}
       </h1>
-      <p className="text-postup-muted mt-2 mb-6">
+      <p className="text-postup-muted text-sm mt-1 mb-5">
         {locale === "es"
-          ? "Esta página es un andamiaje para desarrollo en paralelo. Reemplace cada sección con componentes reales."
-          : "This page is scaffolding for parallel development. Replace each section with real components."}
+          ? "Datos compartidos desde clinic-data.json — reemplace las secciones siguientes."
+          : "Shared data from clinic-data.json — replace the sections below."}
       </p>
 
-      <div className="rounded-xl border border-dashed border-postup-blue/40 bg-postup-soft/50 p-4 mb-8 text-sm text-postup-navy">
-        <p className="font-semibold m-0 mb-1">
-          {locale === "es" ? "Para quien implementa" : "For the implementer"}
-        </p>
-        <ul className="m-0 pl-4 space-y-1 text-postup-muted">
-          <li>
-            Shell: <code className="text-xs">components/provider/ProviderShell.tsx</code>
-          </li>
-          <li>
-            Entry: <code className="text-xs">app/provider/page.tsx</code>
-          </li>
-          <li>
-            Session: <code className="text-xs">getProviderSession()</code> from{" "}
-            <code className="text-xs">@/lib/session</code>
-          </li>
-          <li>
-            Handoff: <code className="text-xs">web/PROVIDER.md</code>
-          </li>
+      <section className="panel mb-6 overflow-hidden">
+        <div className="px-4 py-2.5 bg-postup-bg border-b border-[var(--postup-border)]">
+          <h2 className="text-sm font-semibold m-0 text-postup-navy">
+            {locale === "es" ? "Pacientes activos" : "Active patients"}
+          </h2>
+        </div>
+        <ul className="divide-y divide-[var(--postup-border)] m-0 p-0 list-none">
+          {patients.map((p) => (
+            <li
+              key={p.id}
+              className="px-4 py-3 flex justify-between gap-4 items-start bg-white"
+            >
+              <div>
+                <p className="font-medium text-postup-navy m-0 text-sm">
+                  {p.firstName} {p.lastName}
+                </p>
+                <p className="text-xs text-postup-muted m-0 mt-0.5">
+                  {p.procedure} · Day {p.dayPostOp} · {p.mrn}
+                </p>
+              </div>
+              <div className="text-right text-xs shrink-0">
+                {p.alerts.length > 0 ? (
+                  <span className="text-amber-700 font-medium">
+                    {p.alerts.length}{" "}
+                    {locale === "es" ? "alerta(s)" : "alert(s)"}
+                  </span>
+                ) : (
+                  <span className="text-postup-green-dark font-medium">
+                    {locale === "es" ? "Estable" : "Stable"}
+                  </span>
+                )}
+              </div>
+            </li>
+          ))}
         </ul>
-      </div>
+      </section>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
         {SECTIONS.map((section) => (
           <article
             key={section.id}
             id={section.id}
-            className="rounded-2xl border border-[var(--postup-border)] bg-white p-5 shadow-sm"
+            className="panel p-4"
           >
-            <h2 className="text-base font-semibold text-postup-navy m-0">
+            <h2 className="text-sm font-semibold text-postup-navy m-0">
               {locale === "es" ? section.titleEs : section.titleEn}
             </h2>
-            <p className="text-sm text-postup-muted mt-2 mb-3 leading-relaxed">
-              {locale === "es" ? section.descEs : section.descEn}
-            </p>
-            <p className="text-[11px] font-mono text-postup-blue-dark bg-postup-bg rounded-lg px-2 py-1.5 m-0">
+            <p className="text-[11px] font-mono text-postup-muted mt-3 mb-0">
               → {section.fileHint}
             </p>
           </article>

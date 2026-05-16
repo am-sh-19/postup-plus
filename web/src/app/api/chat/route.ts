@@ -1,4 +1,4 @@
-import { PATIENTS } from "@/lib/patients";
+import { getPatient } from "@/lib/data";
 import type { Locale, PatientId } from "@/lib/types";
 
 const MOCK_REPLIES: Record<Locale, string[]> = {
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   const message = body.message?.trim() ?? "";
   const patientId = body.patientId ?? "emily";
   const locale = body.locale ?? "en";
-  const patient = PATIENTS[patientId];
+  const patient = getPatient(patientId);
 
   if (!message) {
     return Response.json({ error: "Message required" }, { status: 400 });

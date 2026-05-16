@@ -36,7 +36,7 @@ Patient sessions are separate: `{ role: "patient", patientId, locale }`.
 
 ## Demo data
 
-Reuse `@/lib/patients` (`PATIENTS.emily`, `PATIENTS.gabriela`) for list rows until a real API exists.
+Import shared records from `@/lib/data` (backed by `src/data/clinic-data.json`) — `getPatients()`, `getPatient(id)`, alerts on each patient.
 
 ## Suggested build order
 

@@ -7,14 +7,15 @@
   --postup-green: #65ca79;
   --postup-green-dark: #2aae72;
   --postup-teal: #5aa6e6;
-  --postup-bg: #f5f7fa;
-  --postup-bg-2: #eef2f7;
+  --postup-bg: #f0f2f5;
+  --postup-bg-2: #e4e8ee;
   --postup-panel: #ffffff;
-  --postup-muted: #5a6d8a;
-  --postup-soft: #e8f4fd;
-  --postup-move-soft: #e8f7ec;
-  --postup-border: rgba(2, 31, 83, 0.1);
-  --postup-rounded: 22px;
+  --postup-muted: #5c6b80;
+  --postup-soft: #e8f1fa;
+  --postup-move-soft: #e6f4ea;
+  --postup-border: rgba(2, 31, 83, 0.12);
+  --postup-radius: 10px;
+  --postup-radius-lg: 14px;
 }
 
 @theme inline {
@@ -36,19 +37,173 @@
 body {
   background: var(--postup-bg);
   color: var(--postup-navy);
-  font-family: var(--font-sans), ui-rounded, system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Shared surfaces */
+.card {
+  background: var(--postup-panel);
+  border: 1px solid var(--postup-border);
+  border-radius: var(--postup-radius-lg);
+  box-shadow: 0 1px 2px rgba(2, 31, 83, 0.04);
+}
+
+.panel {
+  background: var(--postup-panel);
+  border: 1px solid var(--postup-border);
+  border-radius: var(--postup-radius);
+}
+
+.lang-toggle {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--postup-bg);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.lang-toggle button {
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: var(--postup-muted);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.lang-toggle button.active {
+  background: var(--postup-panel);
+  color: var(--postup-navy);
+  box-shadow: 0 1px 2px rgba(2, 31, 83, 0.08);
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--postup-radius);
+  border: 1px solid #c5d0de;
+  background: #fff;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.input-field:focus {
+  outline: 2px solid var(--postup-blue);
+  outline-offset: 1px;
+  border-color: var(--postup-blue);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: var(--postup-radius);
+  background: var(--postup-navy);
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #032a6e;
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.role-tab {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--postup-border);
+  background: var(--postup-bg);
+  color: var(--postup-muted);
+  cursor: pointer;
+}
+
+.role-tab:first-child {
+  border-radius: var(--postup-radius) 0 0 var(--postup-radius);
+}
+
+.role-tab:last-child {
+  border-radius: 0 var(--postup-radius) var(--postup-radius) 0;
+  border-left: none;
+}
+
+.role-tab.active {
+  background: var(--postup-panel);
+  color: var(--postup-navy);
+  border-color: var(--postup-blue);
+  box-shadow: inset 0 0 0 1px var(--postup-blue);
+}
+
+.pain-track {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #059669 0%,
+    #34d399 18%,
+    #fbbf24 40%,
+    #f97316 62%,
+    #ef4444 82%,
+    #b91c1c 100%
+  );
+}
+
+.pain-range {
+  width: 100%;
+  height: 8px;
+  appearance: none;
+  background: transparent;
+  margin: 0;
+}
+
+.pain-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #059669 0%,
+    #34d399 18%,
+    #fbbf24 40%,
+    #f97316 62%,
+    #ef4444 82%,
+    #b91c1c 100%
+  );
+}
+
+.pain-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--postup-navy);
+  box-shadow: 0 1px 4px rgba(2, 31, 83, 0.2);
+  cursor: pointer;
 }
 
 @keyframes walk-pulse {
   0%,
   100% {
-    transform: scale(1) rotate(0deg);
+    transform: scale(1);
   }
   50% {
-    transform: scale(1.12) rotate(-6deg);
+    transform: scale(1.06);
   }
 }
 
 .animate-walk-pulse {
-  animation: walk-pulse 1.8s ease-in-out infinite;
+  animation: walk-pulse 2s ease-in-out infinite;
 }

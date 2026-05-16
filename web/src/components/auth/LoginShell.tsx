@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { LogoHomeLink } from "@/components/brand/LogoHomeLink";
 import type { Locale } from "@/lib/types";
 
 interface LoginShellProps {
@@ -15,38 +15,28 @@ export function LoginShell({
   children,
 }: LoginShellProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-[var(--postup-bg)]">
-      <div className="w-full max-w-md">
-        <div className="flex justify-center mb-8">
-          <Image
-            src="/postup-logo.png"
-            alt="PostUp+"
-            width={180}
-            height={48}
-            priority
-            className="h-12 w-auto"
-          />
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10 bg-[var(--postup-bg)]">
+      <div className="w-full max-w-[420px]">
+        <div className="flex justify-center mb-6">
+          <LogoHomeLink height={44} />
         </div>
 
-        <div
-          className="bg-white rounded-[var(--postup-rounded)] p-8 shadow-sm border border-[var(--postup-border)]"
-          style={{ boxShadow: "0 8px 24px rgba(2, 31, 83, 0.06)" }}
-        >
-          <div className="flex justify-end mb-4">
-            <div className="flex rounded-full bg-[var(--postup-bg)] p-1 text-xs">
+        <div className="card p-6 sm:p-7">
+          <div className="flex justify-end mb-5">
+            <div className="lang-toggle">
               <button
                 type="button"
                 onClick={() => onLocaleChange("en")}
-                className={`rounded-full px-3 py-1 ${locale === "en" ? "bg-postup-blue text-white font-semibold" : "text-postup-muted"}`}
+                className={locale === "en" ? "active" : ""}
               >
-                English
+                EN
               </button>
               <button
                 type="button"
                 onClick={() => onLocaleChange("es")}
-                className={`rounded-full px-3 py-1 ${locale === "es" ? "bg-postup-blue text-white font-semibold" : "text-postup-muted"}`}
+                className={locale === "es" ? "active" : ""}
               >
-                Español
+                ES
               </button>
             </div>
           </div>

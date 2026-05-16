@@ -4,8 +4,8 @@ export const copy = {
   roleGate: {
     title: { en: "Welcome to PostUp+", es: "Bienvenido a PostUp+" },
     subtitle: {
-      en: "Choose how you're using the app today. No password required for this demo.",
-      es: "Elija cómo usará la aplicación hoy. No se requiere contraseña en esta demo.",
+      en: "Choose how you're using the app today.",
+      es: "Elija cómo usará la aplicación hoy.",
     },
     patient: { en: "I'm a patient", es: "Soy paciente" },
     patientDesc: {
@@ -29,21 +29,17 @@ export const copy = {
     postOp: { en: "post-op", es: "postoperatorio" },
   },
   login: {
-    title: { en: "Patient sign-in", es: "Acceso del paciente" },
+    title: { en: "Sign in", es: "Iniciar sesión" },
     subtitle: {
-      en: "Enter your last name and clinic MRN to open your recovery dashboard.",
-      es: "Ingrese su apellido y MRN de la clínica para abrir su panel de recuperación.",
+      en: "Use your clinic username and password.",
+      es: "Use su usuario y contraseña de la clínica.",
     },
-    lastName: { en: "Last name", es: "Apellido" },
-    mrn: { en: "MRN (clinic password)", es: "MRN (contraseña de la clínica)" },
-    submit: { en: "Continue", es: "Continuar" },
-    hint: {
-      en: "Demo: Person / MRN-48291 or Martinez / MRN-71903",
-      es: "Demo: Person / MRN-48291 o Martinez / MRN-71903",
-    },
+    username: { en: "Username", es: "Usuario" },
+    password: { en: "Password", es: "Contraseña" },
+    submit: { en: "Sign in", es: "Iniciar sesión" },
     error: {
-      en: "We couldn't find a chart with that name and MRN.",
-      es: "No encontramos un expediente con ese nombre y MRN.",
+      en: "Invalid username or password for this role.",
+      es: "Usuario o contraseña incorrectos para este rol.",
     },
   },
   loading: {
@@ -87,9 +83,14 @@ export const copy = {
     walkLogged: { en: "Walk logged — next in ~60 min", es: "Caminata registrada — próxima en ~60 min" },
     painTitle: { en: "How much pain right now?", es: "¿Cuánto dolor ahora?" },
     painHint: {
-      en: "Tap a number or drag the slider — 1 is none, 10 is worst imaginable.",
-      es: "Toque un número o arrastre — 1 es ninguno, 10 es lo peor imaginable.",
+      en: "Rate pain at your surgical site after ACL or shoulder surgery — 1 is comfortable, 10 is emergency-level.",
+      es: "Califique el dolor en la zona quirúrgica — 1 es cómodo, 10 es nivel de emergencia.",
     },
+    sliderMin: {
+      en: "Comfortable",
+      es: "Cómodo",
+    },
+    sliderMax: { en: "Call clinic", es: "Llame a la clínica" },
     functionalToggle: {
       en: "＋ What can you do right now?",
       es: "＋ ¿Qué puede hacer ahora?",
@@ -139,8 +140,6 @@ export const copy = {
     yes: { en: "Yes", es: "Sí" },
     help: { en: "Help", es: "Ayuda" },
     no: { en: "No", es: "No" },
-    sliderMin: { en: "😄 No pain", es: "😄 Sin dolor" },
-    sliderMax: { en: "😭 Worst", es: "😭 Peor" },
   },
 } as const;
 

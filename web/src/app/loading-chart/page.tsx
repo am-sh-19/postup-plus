@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { copy, t } from "@/lib/copy";
-import { PATIENTS } from "@/lib/patients";
+import { getPatient } from "@/lib/data";
 import { getPatientSession } from "@/lib/session";
 import type { Locale } from "@/lib/types";
 
@@ -20,7 +20,7 @@ export default function LoadingChartPage() {
       router.replace("/login");
       return;
     }
-    const patient = PATIENTS[session.patientId];
+    const patient = getPatient(session.patientId);
     setLocale(session.locale);
     setPatientName(patient.firstName);
 

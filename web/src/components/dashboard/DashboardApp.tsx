@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { copy, t } from "@/lib/copy";
-import { PATIENTS } from "@/lib/patients";
+import { getPatient, getPatientsRecord } from "@/lib/data";
 import { getPatientSession, setPatientSession } from "@/lib/session";
 import type { ChatMessage, Locale } from "@/lib/types";
 import { ChatPane } from "./ChatPane";
@@ -18,9 +18,9 @@ export function DashboardApp() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
-  const [patientId, setPatientId] = useState<keyof typeof PATIENTS | null>(
-    null,
-  );
+  const [patientId, setPatientId] = useState<
+    keyof ReturnType<typeof getPatientsRecord> | null
+  >(null);
   const [walkCount, setWalkCount] = useState(2);
   const [minutesUntilWalk, setMinutesUntilWalk] = useState(12);
   const [systemMessages, setSystemMessages] = useState<ChatMessage[]>([]);
@@ -44,7 +44,7 @@ export function DashboardApp() {
     return () => clearInterval(timer);
   }, [ready]);
 
-  const patient = patientId ? PATIENTS[patientId] : null;
+  const patient = patientId ? getPatient(patientId) : null;
 
   const addSystemMessage = useCallback(
     (content: string) => {
@@ -59,7 +59,8 @@ export function DashboardApp() {
   function handleLocaleChange(next: Locale) {
     setLocale(next);
     const session = getPatientSession();
-    if (session) setPatientSession(session.patientId, next);
+    if (session)
+      setPatientSession(session.patientId, next, session.username);
   }
 
   function logWalk() {

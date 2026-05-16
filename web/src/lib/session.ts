@@ -1,6 +1,7 @@
 import type {
   Locale,
   PatientId,
+  ProviderId,
   PatientSession,
   ProviderSession,
   Session,
@@ -23,12 +24,20 @@ export function setSession(session: Session): void {
   sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
 }
 
-export function setPatientSession(patientId: PatientId, locale: Locale): void {
-  setSession({ role: "patient", patientId, locale });
+export function setPatientSession(
+  patientId: PatientId,
+  locale: Locale,
+  username: string,
+): void {
+  setSession({ role: "patient", patientId, locale, username });
 }
 
-export function setProviderSession(locale: Locale): void {
-  setSession({ role: "provider", locale });
+export function setProviderSession(
+  providerId: ProviderId,
+  locale: Locale,
+  username: string,
+): void {
+  setSession({ role: "provider", providerId, locale, username });
 }
 
 export function clearSession(): void {

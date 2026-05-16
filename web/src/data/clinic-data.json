@@ -1,0 +1,170 @@
+{
+  "version": 1,
+  "clinic": {
+    "id": "postup-ortho-demo",
+    "name": "PostUp+ Orthopedic Recovery"
+  },
+  "patients": [
+    {
+      "id": "emily",
+      "firstName": "Emily",
+      "lastName": "Person",
+      "mrn": "MRN-48291",
+      "username": "emily.person",
+      "dayPostOp": 7,
+      "procedure": "ACL reconstruction",
+      "surgeon": "Dr. Sakkers",
+      "medication": {
+        "name": "Percocet 5/325 mg",
+        "rx": "1 tablet every 6 hours as needed for pain",
+        "duration": "Prescribed for 3 weeks post-op"
+      },
+      "movementGoal": {
+        "walksPerDay": 8,
+        "minutesPerWalk": 5
+      },
+      "walksToday": 2,
+      "nextDoseIn": "2h 15m",
+      "alerts": [
+        {
+          "id": "a1",
+          "type": "pain",
+          "severity": "medium",
+          "message": "Pain 5/10 at last check-in — within expected range for day 7"
+        }
+      ]
+    },
+    {
+      "id": "gabriela",
+      "firstName": "Gabriela",
+      "lastName": "Martinez",
+      "mrn": "MRN-71903",
+      "username": "gabriela.martinez",
+      "dayPostOp": 5,
+      "procedure": "rotator cuff repair",
+      "surgeon": "Dr. Sakkers",
+      "medication": {
+        "name": "Percocet 5/325 mg",
+        "rx": "1 tablet every 6 hours as needed for pain",
+        "duration": "Prescribed for 3 weeks post-op"
+      },
+      "movementGoal": {
+        "walksPerDay": 8,
+        "minutesPerWalk": 5
+      },
+      "walksToday": 3,
+      "nextDoseIn": "4h 10m",
+      "alerts": []
+    }
+  ],
+  "providers": [
+    {
+      "id": "clinic-staff",
+      "displayName": "Orthopedic clinic",
+      "username": "provider",
+      "title": "NP / clinic staff"
+    }
+  ],
+  "painScale": [
+    {
+      "level": 1,
+      "emoji": "😌",
+      "color": "#059669",
+      "label": { "en": "No surgical pain", "es": "Sin dolor quirúrgico" },
+      "desc": {
+        "en": "Surgical site feels comfortable at rest and with gentle movement.",
+        "es": "La zona quirúrgica se siente cómoda en reposo y con movimiento suave."
+      }
+    },
+    {
+      "level": 2,
+      "emoji": "🙂",
+      "color": "#10b981",
+      "label": { "en": "Barely there", "es": "Casi nada" },
+      "desc": {
+        "en": "You notice the knee or shoulder only if you think about it.",
+        "es": "Solo nota la rodilla u hombro si lo piensa."
+      }
+    },
+    {
+      "level": 3,
+      "emoji": "😊",
+      "color": "#34d399",
+      "label": { "en": "Mild soreness", "es": "Molestia leve" },
+      "desc": {
+        "en": "Typical post-op ache — ice and elevation usually help.",
+        "es": "Molestia típica postoperatoria — hielo y elevación suelen ayudar."
+      }
+    },
+    {
+      "level": 4,
+      "emoji": "😐",
+      "color": "#fbbf24",
+      "label": { "en": "Uncomfortable", "es": "Incómodo" },
+      "desc": {
+        "en": "Stiff when standing or during PT exercises; still manageable.",
+        "es": "Rigidez al levantarse o en ejercicios de PT; aún manejable."
+      }
+    },
+    {
+      "level": 5,
+      "emoji": "😕",
+      "color": "#f59e0b",
+      "label": { "en": "Moderate", "es": "Moderado" },
+      "desc": {
+        "en": "Common on days 5–10 — limits speed, not basic self-care.",
+        "es": "Común en días 5–10 — limita velocidad, no el autocuidado básico."
+      }
+    },
+    {
+      "level": 6,
+      "emoji": "😟",
+      "color": "#fb923c",
+      "label": { "en": "Hard to ignore", "es": "Difícil de ignorar" },
+      "desc": {
+        "en": "Pain pulls focus during walks or transfers — worth logging for your team.",
+        "es": "El dolor distrae al caminar o transferirse — conviene registrarlo."
+      }
+    },
+    {
+      "level": 7,
+      "emoji": "😣",
+      "color": "#f97316",
+      "label": { "en": "Distressing", "es": "Angustiante" },
+      "desc": {
+        "en": "Strong throbbing or sharp pain — contact clinic if new or worsening.",
+        "es": "Dolor fuerte punzante — llame si es nuevo o empeora."
+      }
+    },
+    {
+      "level": 8,
+      "emoji": "😖",
+      "color": "#ef4444",
+      "label": { "en": "Severe", "es": "Severo" },
+      "desc": {
+        "en": "Hard to sleep or bear weight — clinic should review today.",
+        "es": "Dificulta dormir o soportar peso — la clínica debe revisar hoy."
+      }
+    },
+    {
+      "level": 9,
+      "emoji": "😫",
+      "color": "#dc2626",
+      "label": { "en": "Very severe", "es": "Muy severo" },
+      "desc": {
+        "en": "Pain dominates activity; swelling or redness may be up — call clinic.",
+        "es": "El dolor domina la actividad; puede haber más hinchazón — llame."
+      }
+    },
+    {
+      "level": 10,
+      "emoji": "🆘",
+      "color": "#b91c1c",
+      "label": { "en": "Worst imaginable", "es": "Lo peor imaginable" },
+      "desc": {
+        "en": "Emergency-level pain — call clinic now or seek urgent care.",
+        "es": "Dolor de emergencia — llame a la clínica o busque atención urgente."
+      }
+    }
+  ]
+}

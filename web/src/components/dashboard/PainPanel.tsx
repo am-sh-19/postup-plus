@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { copy, t } from "@/lib/copy";
-import { PAIN_LEVELS } from "@/lib/pain";
+import { getPainScale } from "@/lib/data";
 import type { Locale } from "@/lib/types";
 
 interface PainPanelProps {
@@ -11,12 +11,18 @@ interface PainPanelProps {
 }
 
 const FUNCTIONAL = [
-  { key: "walk", icon: "🚶", en: "Walk across room", es: "Caminar por la habitación" },
-  { key: "sit", icon: "🪑", en: "Sit 10 min", es: "Sentarse 10 min" },
-  { key: "stairs", icon: "🪜", en: "One stair", es: "Un escalón" },
+  {
+    key: "walk",
+    en: "Walk across room",
+    es: "Caminar por la habitación",
+  },
+  { key: "sit", en: "Sit 10 min", es: "Sentarse 10 min" },
+  { key: "stairs", en: "One stair", es: "Un escalón" },
 ] as const;
 
 type Chip = "yes" | "help" | "no";
+
+const PAIN_LEVELS = getPainScale();
 
 export function PainPanel({ locale, onSave }: PainPanelProps) {
   const [level, setLevel] = useState(5);
@@ -27,67 +33,83 @@ export function PainPanel({ locale, onSave }: PainPanelProps) {
     stairs: "no",
   });
 
-  const pain = PAIN_LEVELS[level - 1]!;
+  const pain = PAIN_LEVELS.find((p) => p.level === level) ?? PAIN_LEVELS[4]!;
 
   function setChip(action: string, value: Chip) {
     setChips((c) => ({ ...c, [action]: value }));
   }
 
   return (
-    <section className="bg-white rounded-[var(--postup-rounded)] p-4 shadow-sm border border-[var(--postup-border)]/50">
-      <h2 className="text-lg font-semibold m-0">
+    <section className="panel p-4">
+      <h2 className="text-base font-semibold m-0 text-postup-navy">
         {t(copy.dashboard.painTitle, locale)}
       </h2>
-      <p className="text-postup-muted text-xs mt-1 mb-3">
+      <p className="text-postup-muted text-xs mt-1 mb-4 leading-relaxed">
         {t(copy.dashboard.painHint, locale)}
       </p>
 
-      <div className="flex items-center gap-4 mb-3">
-        <span className="text-5xl" aria-hidden>
+      <div
+        className="flex items-center gap-4 mb-4 p-3 rounded-[var(--postup-radius)] border border-[var(--postup-border)]"
+        style={{ backgroundColor: `${pain.color}14` }}
+      >
+        <span
+          className="flex items-center justify-center w-14 h-14 text-3xl rounded-[var(--postup-radius)] shrink-0"
+          style={{ backgroundColor: `${pain.color}28` }}
+          aria-hidden
+        >
           {pain.emoji}
         </span>
-        <div>
-          <div className="text-3xl font-bold leading-none">
+        <div className="min-w-0">
+          <div className="text-2xl font-bold leading-none tabular-nums">
             {level}
-            <span className="text-base text-postup-muted font-normal">/10</span>
+            <span className="text-sm text-postup-muted font-normal">/10</span>
           </div>
-          <div className="font-semibold text-postup-navy">
+          <div
+            className="font-semibold text-[15px] mt-0.5"
+            style={{ color: pain.color }}
+          >
             {pain.label[locale]}
           </div>
-          <div className="text-xs text-postup-muted">{pain.desc[locale]}</div>
+          <p className="text-xs text-postup-muted mt-1 mb-0 leading-snug">
+            {pain.desc[locale]}
+          </p>
         </div>
       </div>
 
       <div
-        className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 mb-3"
+        className="grid grid-cols-5 sm:grid-cols-10 gap-1 mb-4"
         role="group"
         aria-label="Pain level 1 to 10"
       >
-        {PAIN_LEVELS.map((p, i) => {
-          const lv = i + 1;
+        {PAIN_LEVELS.map((p) => {
+          const active = level === p.level;
           return (
             <button
-              key={lv}
+              key={p.level}
               type="button"
-              onClick={() => setLevel(lv)}
-              aria-pressed={level === lv}
-              className={`flex flex-col items-center gap-0.5 rounded-xl border-2 py-1.5 transition-colors ${
-                level === lv
-                  ? "border-postup-blue bg-postup-soft"
-                  : "border-transparent bg-postup-bg hover:bg-postup-bg-2"
-              }`}
+              onClick={() => setLevel(p.level)}
+              aria-pressed={active}
+              className="flex flex-col items-center gap-0.5 py-1.5 rounded-md border transition-all"
+              style={{
+                borderColor: active ? p.color : "transparent",
+                backgroundColor: active ? `${p.color}22` : "var(--postup-bg)",
+                boxShadow: active ? `inset 0 0 0 1px ${p.color}55` : "none",
+              }}
             >
-              <span className="text-lg">{p.emoji}</span>
-              <span className="text-[10px] font-semibold text-postup-muted">
-                {lv}
+              <span className="text-base leading-none">{p.emoji}</span>
+              <span
+                className="text-[10px] font-bold tabular-nums"
+                style={{ color: active ? p.color : "var(--postup-muted)" }}
+              >
+                {p.level}
               </span>
             </button>
           );
         })}
       </div>
 
-      <div className="mb-3">
-        <div className="flex justify-between text-[11px] text-postup-muted mb-1">
+      <div className="mb-4">
+        <div className="flex justify-between text-[11px] text-postup-muted mb-1.5 font-medium">
           <span>{t(copy.dashboard.sliderMin, locale)}</span>
           <span>{t(copy.dashboard.sliderMax, locale)}</span>
         </div>
@@ -97,14 +119,15 @@ export function PainPanel({ locale, onSave }: PainPanelProps) {
           max={10}
           value={level}
           onChange={(e) => setLevel(+e.target.value)}
-          className="w-full accent-postup-blue"
+          className="pain-range"
+          style={{ accentColor: pain.color }}
         />
       </div>
 
       <button
         type="button"
         onClick={() => setActionsOpen((o) => !o)}
-        className="w-full text-left text-sm text-postup-blue font-medium mb-2"
+        className="w-full text-left text-sm text-postup-blue font-medium mb-2 py-1"
       >
         {actionsOpen
           ? t(copy.dashboard.functionalHide, locale)
@@ -112,27 +135,28 @@ export function PainPanel({ locale, onSave }: PainPanelProps) {
       </button>
 
       {actionsOpen && (
-        <div className="mb-3 space-y-2">
-          <h3 className="text-xs font-semibold text-postup-muted uppercase tracking-wide m-0">
+        <div className="mb-4 space-y-0 border border-[var(--postup-border)] rounded-[var(--postup-radius)] overflow-hidden">
+          <div className="px-3 py-2 bg-postup-bg text-[11px] font-semibold text-postup-muted uppercase tracking-wide">
             {t(copy.dashboard.functionalTitle, locale)}
-          </h3>
+          </div>
           {FUNCTIONAL.map((row) => (
             <div
               key={row.key}
-              className="flex items-center gap-2 text-sm py-1.5 border-b border-[var(--postup-border)] last:border-0"
+              className="flex items-center gap-2 text-sm px-3 py-2.5 border-t border-[var(--postup-border)] bg-white"
             >
-              <span>{row.icon}</span>
-              <span className="flex-1">{locale === "es" ? row.es : row.en}</span>
+              <span className="flex-1 text-postup-navy">
+                {locale === "es" ? row.es : row.en}
+              </span>
               <div className="flex gap-1">
                 {(["yes", "help", "no"] as Chip[]).map((c) => (
                   <button
                     key={c}
                     type="button"
                     onClick={() => setChip(row.key, c)}
-                    className={`text-[11px] px-2 py-0.5 rounded-full border ${
+                    className={`text-[11px] px-2 py-0.5 rounded border font-medium ${
                       chips[row.key] === c
-                        ? "bg-postup-blue text-white border-postup-blue"
-                        : "border-[#c5d4e8] text-postup-muted"
+                        ? "bg-postup-navy text-white border-postup-navy"
+                        : "border-[#c5d0de] text-postup-muted bg-white"
                     }`}
                   >
                     {c === "yes"
@@ -151,7 +175,7 @@ export function PainPanel({ locale, onSave }: PainPanelProps) {
       <button
         type="button"
         onClick={() => onSave(level, pain.label[locale])}
-        className="w-full rounded-full bg-postup-navy text-white font-semibold py-3 text-sm"
+        className="btn-primary"
       >
         {t(copy.dashboard.savePain, locale)}
       </button>

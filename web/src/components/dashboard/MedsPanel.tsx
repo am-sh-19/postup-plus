@@ -39,92 +39,64 @@ export function MedsPanel({ patient, locale, onLog }: MedsPanelProps) {
   }
 
   return (
-    <section className="bg-white rounded-2xl p-3.5 shadow-sm border border-[var(--postup-border)]/50">
-      <h3 className="text-sm font-semibold m-0 mb-2">
-        💊 {t(copy.dashboard.medsTitle, locale)}
+    <section className="panel p-3">
+      <h3 className="text-sm font-semibold m-0 mb-2 text-postup-navy">
+        {t(copy.dashboard.medsTitle, locale)}
       </h3>
-      <div className="rounded-xl border border-[var(--postup-border)] p-3 bg-postup-bg/50">
+      <div className="border border-[var(--postup-border)] rounded-[var(--postup-radius)] p-3 bg-postup-bg">
         <p className="font-semibold text-postup-navy text-sm m-0">{med.name}</p>
         <p className="text-xs text-postup-muted m-0 mt-0.5">{med.rx}</p>
-        <span className="inline-block mt-1.5 text-[10px] font-medium text-postup-blue-dark bg-postup-soft px-2 py-0.5 rounded-full">
-          {med.duration}
-        </span>
+        <p className="text-[11px] text-postup-muted mt-1.5 m-0">{med.duration}</p>
 
-        <div className="flex flex-col gap-2 mt-3">
-          <div className="flex gap-2 text-xs bg-white rounded-lg p-2 border border-[var(--postup-border)]">
-            <span>🍽️</span>
-            <span>
-              <strong>{t(copy.dashboard.takeWithFood, locale)}</strong> —{" "}
-              {t(copy.dashboard.takeWithFoodDesc, locale)}
-            </span>
-          </div>
-          <div className="flex gap-2 text-xs bg-white rounded-lg p-2 border border-[var(--postup-border)]">
-            <span>⏰</span>
-            <span>
-              <strong>{t(copy.dashboard.every6h, locale)}</strong> —{" "}
-              {t(copy.dashboard.every6hDesc, locale)}
-            </span>
-          </div>
-        </div>
+        <ul className="mt-3 space-y-2 text-xs text-postup-navy list-none m-0 p-0">
+          <li className="pl-3 border-l-2 border-postup-green-dark">
+            <strong>{t(copy.dashboard.takeWithFood, locale)}</strong> —{" "}
+            {t(copy.dashboard.takeWithFoodDesc, locale)}
+          </li>
+          <li className="pl-3 border-l-2 border-postup-blue">
+            <strong>{t(copy.dashboard.every6h, locale)}</strong> —{" "}
+            {t(copy.dashboard.every6hDesc, locale)}
+          </li>
+        </ul>
 
         <div className="flex flex-col gap-2 mt-3">
           <button
             type="button"
             onClick={handleWithFood}
             disabled={foodDone}
-            className={`flex items-center gap-2 rounded-xl border p-2.5 text-left text-sm transition-colors ${
+            className={`text-left text-sm px-3 py-2 rounded-[var(--postup-radius)] border font-medium ${
               foodDone
                 ? "border-postup-green-dark bg-postup-move-soft"
-                : "border-[#c5d4e8] bg-white hover:border-postup-blue"
+                : "border-[var(--postup-border)] bg-white hover:border-postup-navy/30"
             }`}
           >
-            <span>{foodDone ? "✓" : "🍽️"}</span>
-            <span className="flex flex-col">
-              <span className="font-semibold">
-                {foodDone
-                  ? locale === "es"
-                    ? "Registrado — con comida"
-                    : "Logged — taken with food"
-                  : t(copy.dashboard.btnWithFood, locale)}
-              </span>
-              {!foodDone && (
-                <small className="text-[10px] text-postup-muted">
-                  {t(copy.dashboard.btnWithFoodSub, locale)}
-                </small>
-              )}
-            </span>
+            {foodDone
+              ? locale === "es"
+                ? "Registrado — con comida"
+                : "Logged — taken with food"
+              : t(copy.dashboard.btnWithFood, locale)}
           </button>
           <button
             type="button"
             onClick={handleDose}
             disabled={doseDone}
-            className={`flex items-center gap-2 rounded-xl border p-2.5 text-left text-sm transition-colors ${
+            className={`text-left text-sm px-3 py-2 rounded-[var(--postup-radius)] border font-medium ${
               doseDone
                 ? "border-postup-green-dark bg-postup-move-soft"
-                : "border-postup-blue bg-postup-soft"
+                : "border-postup-navy bg-postup-navy text-white"
             }`}
           >
-            <span>{doseDone ? "✓" : "✓"}</span>
-            <span className="flex flex-col">
-              <span className="font-semibold">
-                {doseDone
-                  ? locale === "es"
-                    ? "Dosis registrada — próxima en ~6 h"
-                    : "Dose logged — next in ~6 hours"
-                  : t(copy.dashboard.btnDose, locale)}
-              </span>
-              {!doseDone && (
-                <small className="text-[10px] text-postup-muted">
-                  {t(copy.dashboard.btnDoseSub, locale)}
-                </small>
-              )}
-            </span>
+            {doseDone
+              ? locale === "es"
+                ? "Dosis registrada"
+                : "Dose logged"
+              : t(copy.dashboard.btnDose, locale)}
           </button>
         </div>
 
         <p className="text-[11px] text-postup-muted mt-2.5 m-0 text-center">
           {t(copy.dashboard.nextDose, locale)}{" "}
-          <strong>{doseDone ? "6 hours" : "2h 15m"}</strong> ·{" "}
+          <strong>{doseDone ? "6h" : patient.nextDoseIn}</strong> ·{" "}
           {t(copy.dashboard.rememberFood, locale)}
         </p>
       </div>
