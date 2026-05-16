@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { copy, t } from "@/lib/copy";
+import {
+  painCheckInMessage,
+  walkLoggedMessage,
+} from "@/lib/action-log";
 import { getPatient, getPatientsRecord } from "@/lib/data";
 import { getPatientSession, setPatientSession } from "@/lib/session";
 import type { ChatMessage, Locale } from "@/lib/types";
@@ -12,7 +15,7 @@ import { MedsPanel } from "./MedsPanel";
 import { MovementBanner } from "./MovementBanner";
 import { MovementLog } from "./MovementLog";
 import { PainPanel } from "./PainPanel";
-import { TopBar } from "./TopBar";
+import { PatientShell } from "./PatientShell";
 
 export function DashboardApp() {
   const router = useRouter();
@@ -46,15 +49,18 @@ export function DashboardApp() {
 
   const patient = patientId ? getPatient(patientId) : null;
 
-  const addSystemMessage = useCallback(
-    (content: string) => {
-      setSystemMessages((msgs) => [
-        ...msgs,
-        { id: crypto.randomUUID(), role: "system", content },
-      ]);
-    },
-    [],
-  );
+  const addSystemMessage = useCallback((content: string) => {
+    const at = new Date();
+    setSystemMessages((msgs) => [
+      ...msgs,
+      {
+        id: crypto.randomUUID(),
+        role: "system",
+        content,
+        timestamp: at.toISOString(),
+      },
+    ]);
+  }, []);
 
   function handleLocaleChange(next: Locale) {
     setLocale(next);
@@ -64,13 +70,10 @@ export function DashboardApp() {
   }
 
   function logWalk() {
-    setWalkCount((c) => Math.min(c + 1, 24));
+    const nextCount = Math.min(walkCount + 1, 24);
+    setWalkCount(nextCount);
     setMinutesUntilWalk(60);
-    addSystemMessage(
-      locale === "es"
-        ? `Caminata de 5 min registrada. ${walkCount + 1} caminatas hoy — siga moviéndose cada hora.`
-        : `5-minute walk logged. ${walkCount + 1} walks today — keep moving every hour.`,
-    );
+    addSystemMessage(walkLoggedMessage(nextCount, locale));
   }
 
   if (!ready || !patient) {
@@ -82,21 +85,30 @@ export function DashboardApp() {
   }
 
   return (
-    <div className="h-screen max-h-dvh flex flex-col bg-[var(--postup-bg)]">
-      <TopBar
-        patient={patient}
-        locale={locale}
-        onLocaleChange={handleLocaleChange}
-      />
+    <PatientShell
+      patient={patient}
+      locale={locale}
+      onLocaleChange={handleLocaleChange}
+    >
+      <div className="mb-3 shrink-0 md:hidden">
+        <p className="text-sm text-postup-muted m-0">
+          Day {patient.dayPostOp} post-op ·{" "}
+          <strong className="text-postup-navy font-medium">
+            {patient.firstName} {patient.lastName}
+          </strong>
+        </p>
+        <p className="text-xs text-postup-muted m-0 mt-0.5">{patient.procedure}</p>
+      </div>
 
-      <div className="flex-1 flex min-h-0 px-4 pb-4 gap-4 max-lg:flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 flex-1 min-h-0">
         <ChatPane
           patient={patient}
           locale={locale}
           externalMessages={systemMessages}
+          className="lg:col-span-3 min-h-[420px] lg:min-h-0"
         />
 
-        <aside className="flex-[0_0_40%] max-w-[40%] min-w-[280px] flex flex-col gap-2.5 overflow-y-auto max-lg:flex-none max-lg:max-w-full max-lg:max-h-[50vh]">
+        <aside className="lg:col-span-2 flex flex-col gap-3 min-h-0 overflow-y-auto pb-1">
           <MovementBanner
             locale={locale}
             minutesUntilWalk={minutesUntilWalk}
@@ -105,11 +117,7 @@ export function DashboardApp() {
           <PainPanel
             locale={locale}
             onSave={(level, label) => {
-              addSystemMessage(
-                locale === "es"
-                  ? `Dolor registrado: ${level}/10 (${label}). Su equipo de cuidado puede ver esto.`
-                  : `Pain check-in saved: ${level}/10 (${label}). Your care team can see this.`,
-              );
+              addSystemMessage(painCheckInMessage(level, label, locale));
             }}
           />
           <MovementLog
@@ -126,6 +134,6 @@ export function DashboardApp() {
           <FaqSection locale={locale} />
         </aside>
       </div>
-    </div>
+    </PatientShell>
   );
 }

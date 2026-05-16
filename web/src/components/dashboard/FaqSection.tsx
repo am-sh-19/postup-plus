@@ -27,7 +27,7 @@ export function FaqSection({ locale }: { locale: Locale }) {
             setOpenIndex(0);
             setModalOpen(true);
           }}
-          className="w-full flex items-center gap-3 p-3 rounded-xl bg-white border border-[var(--postup-border)] text-left hover:border-postup-blue/40"
+          className="portal-card w-full flex items-center gap-3 p-4 text-left hover:border-postup-blue/40 transition-colors"
         >
           <span className="text-xl">❓</span>
           <span className="flex-1">
@@ -42,7 +42,7 @@ export function FaqSection({ locale }: { locale: Locale }) {
         </button>
       </nav>
 
-      <div className="bg-white rounded-2xl p-3.5 border border-[var(--postup-border)]/50">
+      <div className="portal-card p-4">
         <h3 className="text-sm font-semibold m-0 mb-2">
           {t(copy.dashboard.quickAnswers, locale)}
         </h3>
@@ -66,7 +66,7 @@ export function FaqSection({ locale }: { locale: Locale }) {
           onClick={() => setModalOpen(false)}
         >
           <div
-            className="bg-white rounded-[var(--postup-rounded)] w-full max-w-lg max-h-[90vh] overflow-y-auto p-8 relative shadow-xl"
+            className="portal-card w-full max-w-lg max-h-[90vh] overflow-y-auto p-8 relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button

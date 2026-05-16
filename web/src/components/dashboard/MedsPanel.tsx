@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { medDoseMessage, medWithFoodMessage } from "@/lib/action-log";
 import { copy, t } from "@/lib/copy";
 import type { Locale, Patient } from "@/lib/types";
 
@@ -18,20 +19,12 @@ export function MedsPanel({ patient, locale, onLog }: MedsPanelProps) {
 
   function handleWithFood() {
     setFoodDone(true);
-    onLog(
-      locale === "es"
-        ? "Percocet registrado con comida. Recuerde: cada 6 horas, no antes."
-        : "Percocet logged with food. Remember: every 6 hours, not sooner.",
-    );
+    onLog(medWithFoodMessage(locale));
   }
 
   function handleDose() {
     setDoseDone(true);
-    onLog(
-      locale === "es"
-        ? "Dosis de Percocet marcada (5/325 mg). Próxima dosis en ~6 horas — con comida."
-        : "Percocet dose marked taken (5/325 mg). Next dose in about 6 hours — take with food.",
-    );
+    onLog(medDoseMessage(locale));
     setTimeout(() => {
       setFoodDone(false);
       setDoseDone(false);
@@ -39,7 +32,7 @@ export function MedsPanel({ patient, locale, onLog }: MedsPanelProps) {
   }
 
   return (
-    <section className="panel p-3">
+    <section className="portal-card p-4">
       <h3 className="text-sm font-semibold m-0 mb-2 text-postup-navy">
         {t(copy.dashboard.medsTitle, locale)}
       </h3>

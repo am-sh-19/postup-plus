@@ -48,7 +48,7 @@ export function PainPanel({ locale, onSave }: PainPanelProps) {
   }
 
   return (
-    <section className="panel p-4">
+    <section className="portal-card p-4">
       <h2 className="text-base font-semibold m-0 text-postup-navy">
         {t(copy.dashboard.painTitle, locale)}
       </h2>

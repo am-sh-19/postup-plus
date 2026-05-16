@@ -11,6 +11,7 @@ interface ChatPaneProps {
   patient: Patient;
   locale: Locale;
   externalMessages: ChatMessage[];
+  className?: string;
 }
 
 function seedMessages(patient: Patient, locale: Locale): UIMessage[] {
@@ -44,6 +45,7 @@ export function ChatPane({
   patient,
   locale,
   externalMessages,
+  className = "",
 }: ChatPaneProps) {
   const transport = useMemo(
     () => new DefaultChatTransport({ api: "/api/chat" }),
@@ -99,11 +101,14 @@ export function ChatPane({
   }
 
   return (
-    <section className="flex-[0_0_60%] max-w-[60%] flex flex-col min-w-0 max-lg:flex-none max-lg:max-w-full max-lg:w-full">
-      <div className="flex-1 flex flex-col card p-5 sm:p-6 min-h-0">
-        <div className="mb-3 shrink-0 flex items-start justify-between gap-3">
+    <section
+      className={`flex flex-col min-h-0 min-w-0 ${className}`.trim()}
+      aria-label={t(copy.dashboard.chatTitle, locale)}
+    >
+      <div className="portal-card flex flex-col flex-1 min-h-0 p-5 sm:p-6">
+        <div className="mb-3 shrink-0 flex items-start justify-between gap-3 border-b border-[var(--postup-border)]/50 pb-3">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight m-0">
+            <h1 className="text-xl font-semibold tracking-tight m-0 text-postup-navy">
               {t(copy.dashboard.chatTitle, locale)}
             </h1>
             <p className="text-postup-muted text-sm m-0 mt-1">
@@ -114,7 +119,7 @@ export function ChatPane({
             <button
               type="button"
               onClick={() => stop()}
-              className="shrink-0 text-xs font-semibold text-postup-muted hover:text-postup-blue px-3 py-1.5 rounded-full border border-[var(--postup-border)] bg-white"
+              className="shrink-0 text-xs font-semibold text-postup-muted hover:text-postup-blue px-3 py-1.5 rounded-[var(--postup-radius)] border border-[var(--postup-border)] bg-white"
             >
               {locale === "es" ? "Detener" : "Stop"}
             </button>
@@ -123,7 +128,7 @@ export function ChatPane({
 
         <div
           ref={streamRef}
-          className="flex-1 flex flex-col gap-3 overflow-y-auto min-h-0 pr-1"
+          className="flex-1 flex flex-col gap-3 overflow-y-auto min-h-[240px] py-2 pr-1"
         >
           {messages.map((msg) => {
             const text = messageText(msg);
@@ -132,7 +137,8 @@ export function ChatPane({
               return (
                 <div
                   key={msg.id}
-                  className="self-center max-w-[92%] text-center bg-postup-bg-2 text-postup-muted text-[13px] px-4 py-2.5 rounded-xl border border-[var(--postup-border)]/60"
+                  className="w-full rounded-[var(--postup-radius)] border border-[var(--postup-border)] bg-postup-bg px-3 py-2.5"
+                  role="status"
                 >
                   <ChatMarkdown content={text} variant="system" />
                 </div>
@@ -143,7 +149,7 @@ export function ChatPane({
               return (
                 <div
                   key={msg.id}
-                  className="self-end max-w-[82%] bg-postup-blue text-white px-4 py-3 rounded-[18px] rounded-br-sm text-[15px] leading-relaxed shadow-sm"
+                  className="self-end max-w-[85%] bg-postup-blue text-white px-4 py-2.5 rounded-[var(--postup-radius)] rounded-br-sm text-[15px] leading-relaxed"
                 >
                   <p className="m-0 whitespace-pre-wrap">{text}</p>
                 </div>
@@ -153,7 +159,7 @@ export function ChatPane({
             return (
               <div
                 key={msg.id}
-                className="self-start max-w-[88%] bg-white border border-[var(--postup-border)] px-4 py-3 rounded-[18px] rounded-bl-sm shadow-sm"
+                className="self-start max-w-[90%] bg-postup-soft border border-[var(--postup-border)]/40 px-4 py-2.5 rounded-[var(--postup-radius)] rounded-bl-sm"
               >
                 <ChatMarkdown content={text} variant="assistant" />
               </div>
@@ -161,13 +167,13 @@ export function ChatPane({
           })}
 
           {status === "submitted" && (
-            <div className="self-start max-w-[88%] bg-white border border-[var(--postup-border)] px-4 py-3 rounded-[18px] rounded-bl-sm">
+            <div className="self-start max-w-[90%] bg-postup-soft border border-[var(--postup-border)]/40 px-4 py-2.5 rounded-[var(--postup-radius)] rounded-bl-sm">
               <TypingDots />
             </div>
           )}
 
           {error && (
-            <div className="self-center max-w-[92%] text-center bg-red-50 text-red-700 text-[13px] px-4 py-2.5 rounded-xl border border-red-100">
+            <div className="w-full text-center bg-red-50 text-red-700 text-[13px] px-4 py-2.5 rounded-[var(--postup-radius)] border border-red-100">
               {locale === "es"
                 ? "No pude conectar. Intente de nuevo."
                 : "Couldn't connect. Try again."}
@@ -175,7 +181,7 @@ export function ChatPane({
           )}
         </div>
 
-        <div className="shrink-0 flex gap-2.5 mt-4 pt-3.5 border-t border-[var(--postup-border)]">
+        <div className="shrink-0 flex gap-2 mt-4 pt-3 border-t border-[var(--postup-border)]">
           <input
             ref={inputRef}
             type="text"
@@ -188,7 +194,7 @@ export function ChatPane({
               }
             }}
             placeholder={t(copy.dashboard.chatPlaceholder, locale)}
-            className="flex-1 rounded-[var(--postup-radius)] border border-[#c5d4e8] px-4 py-3 text-[15px] focus:outline-2 focus:outline-postup-blue disabled:opacity-60 bg-white"
+            className="input-field flex-1 min-w-0 py-2.5"
             disabled={isBusy}
             autoFocus
           />
@@ -196,7 +202,7 @@ export function ChatPane({
             type="button"
             onClick={submit}
             disabled={isBusy || !input.trim()}
-            className="btn-primary shrink-0 px-5 py-3"
+            className="btn-send"
           >
             {t(copy.dashboard.send, locale)}
           </button>

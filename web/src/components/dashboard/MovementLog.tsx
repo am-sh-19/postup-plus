@@ -17,7 +17,7 @@ export function MovementLog({
   onDecrement,
 }: MovementLogProps) {
   return (
-    <section className="panel p-3">
+    <section className="portal-card p-4">
       <h3 className="text-sm font-semibold m-0 text-postup-navy">
         {t(copy.dashboard.movementTitle, locale)}
       </h3>
