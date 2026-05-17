@@ -1,6 +1,9 @@
 # postup+
 
-Hackathon project for post-operative patient care.
+Post-operative patient care and pain management platform. Built during MIT Hacking Medicine Hackathon at Boston Orthopedic Technology Summit (BOTS). 
+
+Won 2nd place. 
+
 
 ## Run locally
 
